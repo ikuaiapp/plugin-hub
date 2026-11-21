@@ -1,0 +1,16 @@
+{
+  "repo": "ikuaiapp/plugin-hub",
+  "visibility": "public",
+  "default_branch": "main",
+  "homepage": "https://github.com/ikuaiapp/plugin-hub",
+  "description": "Public online plugin catalog and Mainland China mirror index for iKuai 3.7.x x64 plugins (ikuaiapp/plugin-store)",
+  "topics": [
+    "ikuai",
+    "ikuai-plugin",
+    "plugin-hub",
+    "plugin-store",
+    "router",
+    "openresty",
+    "x86-64"
+  ]
+}

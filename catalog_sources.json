@@ -1,0 +1,290 @@
+{
+  "schema_version": 1,
+  "hub_repo": "ikuaiapp/plugin-hub",
+  "mirrors": {
+    "raw": [
+      "https://gh-proxy.org/",
+      "https://ghfast.top/",
+      "https://gh-proxy.com/",
+      "https://wget.la/"
+    ],
+    "release": [
+      "https://gh-proxy.org/",
+      "https://ghfast.top/",
+      "https://gh-proxy.com/",
+      "https://cdn.gh-proxy.com/",
+      "https://edgeone.gh-proxy.com/",
+      "https://wget.la/"
+    ],
+    "jsdelivr": [
+      "https://cdn.jsdelivr.net/gh/ikuaiapp/plugin-hub@main/",
+      "https://fastly.jsdelivr.net/gh/ikuaiapp/plugin-hub@main/",
+      "https://gcore.jsdelivr.net/gh/ikuaiapp/plugin-hub@main/"
+    ],
+    "raw_direct": [
+      "https://raw.bgithub.xyz/ikuaiapp/plugin-hub/main/"
+    ]
+  },
+  "sources": [
+    {
+      "name": "router_backup",
+      "alias": "路由远程备份",
+      "repo": "ikuaiapp/config-backup",
+      "visibility": "public",
+      "tag": "v3.7",
+      "version": "3.7",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "自定义时间备份爱快路由原生配置，支持本地与当前设备远端 FTP/FTPS 管理及校验恢复",
+      "manufacturer": "ikuaiapp",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "d6a6a0216f9a6f8f923fdc918422bc225f205bc0bc6c4261e8cdf17ca91012d9",
+      "size": 47239,
+      "icon": "icons/router_backup.png",
+      "local_source": {
+        "dir": "config-backup",
+        "metadata_relpath": "router_backup/html/metadata.json",
+        "icon_relpath": "router_backup/html/router_backup.png",
+        "sha256_relpath": "releases/config-backup-3.7-ikuai-3.7.x-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "fn-knock",
+      "alias": "fn-knock",
+      "repo": "ikuaiapp/knock",
+      "visibility": "public",
+      "tag": "v2.5.11",
+      "version": "2.5.11",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "fn-knock 管理、每日备份与完整恢复",
+      "manufacturer": "本地插件",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "2b0293574f72878de1955b3e3f5240b53747bbb640089cea39b274d5ba989e4e",
+      "size": 32157989,
+      "icon": "icons/fn-knock.png",
+      "local_source": {
+        "dir": "knock",
+        "metadata_relpath": "fn-knock/html/metadata.json",
+        "icon_relpath": "fn-knock/html/fn-knock.png",
+        "sha256_relpath": "releases/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "docker",
+      "alias": "Docker容器",
+      "repo": "ikuaiapp/docker",
+      "visibility": "public",
+      "tag": "v28.5.2",
+      "version": "28.5.2",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "通过Docker功能，用户可以打包应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。",
+      "manufacturer": "iKuai",
+      "releasenotes": "",
+      "only_offline_install": true,
+      "asset_name": "docker-28.5.2-ikuai-3.7-x64.tar.gz",
+      "sha256": "56157c934f3816f4ae6c53b6d070f359453b092bd375668a211fbcddb1f4600c",
+      "size": 100046010,
+      "icon": "icons/docker.png",
+      "local_source": {
+        "dir": "docker",
+        "metadata_relpath": "docker/html/metadata.json",
+        "icon_relpath": "docker/html/docker.png",
+        "sha256_relpath": "releases/docker-28.5.2-ikuai-3.7-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "MeshCentral",
+      "alias": "MeshCentral 远程管理",
+      "repo": "ikuaiapp/MeshCentral",
+      "visibility": "public",
+      "tag": "v3.7.26",
+      "version": "3.7.26",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.26"
+      ],
+      "description": "在爱快路由器本机运行 MeshCentral 1.3.1 远程管理平台（适配 iKuai 3.7.26 x64）",
+      "manufacturer": "MeshCentral / ikuaiapp",
+      "releasenotes": "版本对齐 iKuai 3.7.26；内置 MeshCentral 1.3.1 与 Node v24.22.1；日志与数据全量置于 /etc/log 并启用 5 MiB x 3 有界轮转，禁用重复内建 autoBackup。",
+      "only_offline_install": false,
+      "asset_name": "MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "sha256": "ad93f61b8e2245755300b380a027c73b3435bd750d3bef3323758cbff103daec",
+      "size": 125786787,
+      "icon": "icons/MeshCentral.png",
+      "local_source": {
+        "dir": "MeshCentral",
+        "metadata_relpath": "MeshCentral/html/metadata.json",
+        "icon_relpath": "MeshCentral/html/MeshCentral.png",
+        "sha256_relpath": "releases/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "vnt2",
+      "alias": "VNT 套件",
+      "repo": "ikuaiapp/vnt",
+      "visibility": "public",
+      "tag": "v3.7.26",
+      "version": "3.7.26",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.26"
+      ],
+      "description": "VNT 2.x 客户端与 VNTS 服务端爱快一体化管理套件。",
+      "manufacturer": "ikuaiapp",
+      "releasenotes": "版本对齐 iKuai 3.7.26；内置 VNT 2.0.11 / VNTS 2.0.9；数据与日志迁移至 /etc/log/vnt2 并限制日志轮转上限。",
+      "only_offline_install": false,
+      "asset_name": "vnt2-ikuai-3.7.26_x86_64.tar.gz",
+      "sha256": "8d445017c3c22504187e4b753e4c08b97c8b7db79a49e419597e8c51a63a5e7f",
+      "size": 11940298,
+      "icon": "icons/vnt2.png",
+      "local_source": {
+        "dir": "vnt",
+        "metadata_relpath": "vnt2/html/metadata.json",
+        "icon_relpath": "vnt2/html/vnt2.png",
+        "sha256_relpath": "releases/vnt2-ikuai-3.7.26_x86_64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "vnstat",
+      "alias": "vnStat 流量统计",
+      "repo": "ikuaiapp/vnstat",
+      "visibility": "public",
+      "tag": "v3.7.26",
+      "version": "3.7.26",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.26+"
+      ],
+      "description": "WAN出口与每接口独立账期流量统计（内置 vnStat 2.14）",
+      "manufacturer": "vnStat / ikuaiapp",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "sha256": "45ceebeafea81de5bf5be66948b750adbe1fff7f4e1a04fcfe2ba9b180c08600",
+      "size": 1395719,
+      "icon": "icons/vnstat.png",
+      "local_source": {
+        "dir": "vnstat",
+        "metadata_relpath": "payload/html/metadata.json",
+        "icon_relpath": "payload/html/vnstat.png",
+        "sha256_relpath": "releases/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256"
+      }
+    },
+    {
+      "name": "system-tools",
+      "alias": "系统工具",
+      "repo": "ikuaiapp/system-tools",
+      "visibility": "private_pending",
+      "tag": "v1.1.9",
+      "version": "1.1.9",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件",
+      "manufacturer": "ikuaiapp",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "c50c5f79ff26b144db52f807e2e2fc5d77f3243547ff575351270e25401e40f6",
+      "size": 284169,
+      "icon": "icons/system-tools.png",
+      "local_source": {
+        "dir": "system-tools",
+        "metadata_relpath": "system-tools/html/metadata.json",
+        "icon_relpath": "system-tools/html/system-tools.png",
+        "sha256_relpath": "releases/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "ikev2-cert",
+      "alias": "IKEv2证书申请",
+      "repo": "ikuaiapp/ikev2-acme",
+      "visibility": "private_pending",
+      "tag": "v3.1.7",
+      "version": "3.1.7",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7）",
+      "manufacturer": "本地插件适配",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "dd60e3b0b5cf83a3d32f9f4e859019b6a0d252c85b79da4dc5ac0d5e246fcfa6",
+      "size": 113141,
+      "icon": "icons/ikev2-cert.png",
+      "local_source": {
+        "dir": "ikev2-acme",
+        "metadata_relpath": "ikev2-cert/html/metadata.json",
+        "icon_relpath": "ikev2-cert/html/ikev2-cert.png",
+        "sha256_relpath": "releases/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    },
+    {
+      "name": "Ttyd",
+      "alias": "Ttyd终端",
+      "repo": "ikuaiapp/ttyd",
+      "visibility": "private_pending",
+      "tag": "v1.7.7",
+      "version": "1.7.7",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。",
+      "manufacturer": "iKuai",
+      "releasenotes": "升级上游 ttyd 至 1.7.7，配置与运行日志迁移至 /etc/log 并支持有界轮转，全面兼容 iKuai 3.7.x x64。",
+      "only_offline_install": false,
+      "asset_name": "ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "98da2f68cd5959dedb1c7059d364b00dd54e5997fd0e13a23d5da9665c8a9e2f",
+      "size": 930568,
+      "icon": "icons/Ttyd.png",
+      "local_source": {
+        "dir": "ttyd",
+        "metadata_relpath": "Ttyd/html/metadata.json",
+        "icon_relpath": "Ttyd/html/Ttyd.png",
+        "sha256_relpath": "releases/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz.sha256",
+        "manifest_relpath": "releases/BUILD-MANIFEST.json"
+      }
+    }
+  ]
+}
