@@ -535,6 +535,35 @@ class BuildIndexTests(unittest.TestCase):
                     repo_root=root,
                 )
 
+    def test_rejects_trailing_newline_in_regex_validated_fields(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources_path, out_path = self._create_fixture_repo(root)
+            base = json.loads(sources_path.read_text(encoding="utf-8"))
+            base["sources"][0]["release_repo"] = "ikuaiapp/plugin-hub"
+            base["sources"][0]["release_tag"] = "v1.0.0"
+
+            newline_cases = (
+                ("name", "demo_app\n"),
+                ("repo", "ikuaiapp/demo-repo\n"),
+                ("release_repo", "ikuaiapp/plugin-hub\n"),
+                ("tag", "v1.2.3\n"),
+                ("release_tag", "v1.0.0\n"),
+                ("asset_name", "demo-1.2.3.tar.gz\n"),
+                ("sha256", ("a" * 64) + "\n"),
+            )
+            for field, bad_val in newline_cases:
+                with self.subTest(field=field):
+                    mut = copy.deepcopy(base)
+                    mut["sources"][0][field] = bad_val
+                    sources_path.write_text(json.dumps(mut), encoding="utf-8")
+                    with self.assertRaises(build_index.BuildIndexError):
+                        build_index.build_index(
+                            sources_path=sources_path,
+                            output_path=out_path,
+                            repo_root=root,
+                        )
+
 
 if __name__ == "__main__":
     unittest.main()

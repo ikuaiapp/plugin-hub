@@ -37,8 +37,8 @@
 
 ## 3. 自动化测试与脱敏审计
 
-- **离线镜像探测自检**：`python3 -B scripts/verify_mirrors.py --offline-test --all-plugins --json` 通过（`passed: true`，`plugins_checked: 9`，`raw_ok >= 1`，`release_ok >= 1`，`icon_ok >= 1`，`range_ok >= 1`，正确拦截模拟 HTTP `200` HTML 门户页并验证 TLS 1.2 / PNG / `.sha256` / gzip 魔数）。
-- **单元测试与完整性套件**：`python3 -B -m unittest discover -s tests -p "test_*.py" -v` 共 **27** 项用例全部通过（`OK`，0 失败，0 错误）。
+- **离线镜像探测自检**：`python3 -B scripts/verify_mirrors.py --offline-test --all-plugins --json` 通过（`passed: true`，`plugins_checked: 9`，`per_plugin_ok: true`，`raw_ok >= 1`，`release_ok >= 1`，`icon_ok >= 1`，`range_ok >= 1`，正确拦截模拟 HTTP `200` HTML 门户页并验证 TLS 1.2 / PNG / `.sha256` / gzip 魔数与单插件逐项最低镜像阈值）。
+- **单元测试与完整性套件**：`python3 -B -m unittest discover -s tests -p "test_*.py" -v` 共 **29** 项用例全部通过（`OK`，0 失败，0 错误）。
 - **9 插件发布包上传前脱敏审计（M6）**：
   - 9/9 远程 Release `.tar.gz` 与 `.sha256` 均与 GitHub API `digest` / `size` 及本地 `3.7.26/*/releases/` 完全一致；
   - 9/9 压缩包通过 `safe_import.sh --check`（输出 `Validated <name>`）及 `html/metadata.json` / `<name>.png` 一致性校验；
@@ -58,4 +58,7 @@
   - 在 `iKuai 3.7.26 x64` 测试路由器上使用 `curl -4 -fSL --tlsv1.2 -r 0-511` 实测所有 6 个收录插件（`router_backup`、`fn-knock`、`docker`、`MeshCentral`、`vnt2`、`vnstat`）：每个插件均有 `3`–`4` 个中国大陆镜像节点返回 `HTTP 206` 与 gzip 魔数 `1f8b`（`ghfast.top`、`wget.la`、`cdn.gh-proxy.com`、`edgeone.gh-proxy.com`、`gh-proxy.org`），个别镜像 DNS 超时或返回 `403` 时可正常触发故障转移。
 - **测试路由器实机索引拉取与安装/卸载联动**：
   - 通过局域网临时 HTTP 索引服务向路由器下发 `plugins.json` 并调用 `plugin-store v2.1.0` 的 `set_hub_url` / `refresh_hub` / `uninstall` / `install_online`：卸载 `router_backup` 后其自动进入 `online` 列表，触发 `install_online` 后由路由器经 `ghfast.top` 拉取真实 GitHub Release 压缩包（`14.52s`）、完成 SHA-256 校验与安装并从 `online` 移除、回到 `installed` 列表；随后恢复默认 `plugins.json` 源地址。
-  - **M6 发布后复验命令**：`main` 分支与 Release `v1.0.0`（18 个资产：`9 .tar.gz + 9 .tar.gz.sha256`）推送上传完成后，执行 `python3 -B scripts/build_index.py --verify-remote --check` 与 `python3 -B scripts/verify_mirrors.py --check-assets --all-plugins --json` 验证全部 9 款插件直连与大陆镜像均可正常下载。
+  - **M6 发布后全量 9/9 实时镜像与资产实测结果（2026-11-22）**：
+    - `main` 分支与 Release `v1.0.0`（18 个资产：`9 .tar.gz + 9 .tar.gz.sha256`）推送上传完成后，执行 `python3 -B scripts/verify_mirrors.py --check-assets --all-plugins --json` 全部通过（`passed: true`，`mode: live`，`plugins_checked: 9`，`total_probes: 216`，`raw_ok: 8`，`release_ok: 52`，`icon_ok: 72`，`range_ok: 52`，全部 `TLSv1.2`）：
+      - 9 款插件逐项全部达标：`router_backup`、`fn-knock`、`vnt2`、`vnstat`、`system-tools`、`Ttyd` 均 `icon 8/9` / `.sha256 6/7` / `Range206 6/7`；`docker` `icon 8/9` / `.sha256 6/7` / `Range206 5/7`；`MeshCentral` `icon 8/9` / `.sha256 5/7` / `Range206 6/7`；`ikev2-cert` `icon 8/9` / `.sha256 5/7` / `Range206 5/7`。
+      - 经 M6 补强后，`verify_mirrors.py` 已将 `min_raw` / `min_release` 强制下沉至逐插件（`per_plugin_ok`）校验，并在修订推送后再次执行 `python3 -B scripts/build_index.py --verify-remote --check` 与 `python3 -B scripts/verify_mirrors.py --check-assets --all-plugins --json` 复验确认。

@@ -403,6 +403,83 @@ class VerifyMirrorsTests(unittest.TestCase):
         self.assertEqual(doc["summary"]["plugins_checked"], 9)
         self.assertIn(plugin["asset_name"][:12], "system-tools")
 
+    def test_all_plugins_fails_when_single_plugin_fails_sha256_icon_or_range(self) -> None:
+        import copy
+
+        real_index = json.loads((ROOT / "plugins.json").read_text(encoding="utf-8"))
+        mut_index = copy.deepcopy(real_index)
+        mut_index["plugins"][8]["sha256"] = "0" * 64
+        rep_mut = verify_mirrors.verify_all(
+            mut_index,
+            client=verify_mirrors._OfflineMockProbeClient(real_index),
+            check_assets=True,
+            all_plugins=True,
+        )
+        self.assertFalse(rep_mut["passed"])
+        self.assertFalse(rep_mut["summary"]["per_plugin_ok"])
+        self.assertEqual(rep_mut["summary"]["plugins_checked"], 9)
+        self.assertGreaterEqual(rep_mut["summary"]["release_ok"], 1)
+
+        idx = _sample_index()
+        p2 = dict(idx["plugins"][0])
+        p2["name"] = "second_plugin"
+        p2["icon"] = "icons/second_plugin.png"
+        p2["asset_name"] = "second-1.0.tar.gz"
+        p2["download_url"] = "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/second-1.0.tar.gz"
+        idx["plugins"].append(p2)
+
+        class _SelectiveFailClient:
+            def __init__(self, fail_mode: str) -> None:
+                self.fail_mode = fail_mode
+
+            def fetch(self, url: str, *, timeout: float, headers: dict[str, str] | None = None, max_bytes: int = 1048576):
+                if url.endswith("plugins.json"):
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "application/json"}, json.dumps(idx).encode(), "TLSv1.2")
+                if url.endswith("second_plugin.png"):
+                    if self.fail_mode == "icon":
+                        return verify_mirrors.ProbeResponse(404, {}, b"missing", "TLSv1.2")
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "image/png"}, verify_mirrors.PNG_MAGIC + b"\x00" * 24, "TLSv1.2")
+                if url.endswith(".png"):
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "image/png"}, verify_mirrors.PNG_MAGIC + b"\x00" * 24, "TLSv1.2")
+                if url.endswith("second-1.0.tar.gz.sha256"):
+                    if self.fail_mode == "sha256":
+                        return verify_mirrors.ProbeResponse(404, {}, b"missing", "TLSv1.2")
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "text/plain"}, f"{p2['sha256']}  {p2['asset_name']}\n".encode(), "TLSv1.2")
+                if url.endswith(".sha256"):
+                    p0 = idx["plugins"][0]
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "text/plain"}, f"{p0['sha256']}  {p0['asset_name']}\n".encode(), "TLSv1.2")
+                if url.endswith("second-1.0.tar.gz"):
+                    if self.fail_mode == "range":
+                        return verify_mirrors.ProbeResponse(404, {}, b"missing", "TLSv1.2")
+                    return verify_mirrors.ProbeResponse(206, {"content-type": "application/octet-stream"}, verify_mirrors.GZIP_MAGIC + b"\x00" * 32, "TLSv1.2")
+                if url.endswith(".tar.gz"):
+                    return verify_mirrors.ProbeResponse(206, {"content-type": "application/octet-stream"}, verify_mirrors.GZIP_MAGIC + b"\x00" * 32, "TLSv1.2")
+                return verify_mirrors.ProbeResponse(404, {}, b"unexpected", "TLSv1.2")
+
+        ok_rep = verify_mirrors.verify_all(idx, client=_SelectiveFailClient("none"), check_assets=True, all_plugins=True)
+        self.assertTrue(ok_rep["passed"])
+        self.assertTrue(ok_rep["summary"]["per_plugin_ok"])
+
+        for mode in ("sha256", "icon", "range"):
+            with self.subTest(fail_mode=mode):
+                fail_rep = verify_mirrors.verify_all(
+                    idx,
+                    client=_SelectiveFailClient(mode),
+                    check_assets=True,
+                    all_plugins=True,
+                )
+                self.assertFalse(fail_rep["passed"])
+                self.assertFalse(fail_rep["summary"]["per_plugin_ok"])
+
+        sha_no_assets = verify_mirrors.verify_all(
+            idx,
+            client=_SelectiveFailClient("sha256"),
+            check_assets=False,
+            all_plugins=True,
+        )
+        self.assertFalse(sha_no_assets["passed"])
+        self.assertFalse(sha_no_assets["summary"]["per_plugin_ok"])
+
 
 if __name__ == "__main__":
     unittest.main()

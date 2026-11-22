@@ -24,11 +24,11 @@ DEFAULT_OUTPUT = REPO_ROOT / "plugins.json"
 
 MAX_ICON_BYTES = 1024 * 1024
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
-NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
-REPO_RE = re.compile(r"^ikuaiapp/[A-Za-z0-9._-]+$")
-TAG_RE = re.compile(r"^[A-Za-z0-9._+-]+$")
-ASSET_RE = re.compile(r"^[A-Za-z0-9._-]+$")
-SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*\Z")
+REPO_RE = re.compile(r"^ikuaiapp/[A-Za-z0-9._-]+\Z")
+TAG_RE = re.compile(r"^[A-Za-z0-9._+-]+\Z")
+ASSET_RE = re.compile(r"^[A-Za-z0-9._-]+\Z")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}\Z")
 ISO_UTC_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 INVISIBLE_CHARS_RE = re.compile(r"[\ufeff\u200b\u200c\u200d]")
 VALID_VISIBILITIES = {"public", "private_pending", "disabled"}

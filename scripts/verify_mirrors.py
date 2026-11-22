@@ -422,12 +422,14 @@ def verify_all(
         )
         results.append(res)
 
+    per_plugin_ok = True
     for plugin in validated_plugins:
         sample_icon = str(plugin["icon"])
         sample_url = str(plugin["download_url"])
         sample_sha256 = str(plugin["sha256"])
         sample_asset = str(plugin["asset_name"])
 
+        p_icon_ok = 0
         if check_assets:
             for role, mirror, url in build_raw_targets(index, sample_icon):
                 res = _probe_single(
@@ -439,7 +441,10 @@ def verify_all(
                     validator=_validate_png,
                 )
                 results.append(res)
+                if res.ok:
+                    p_icon_ok += 1
 
+        p_sha_ok = 0
         for role, mirror, sidecar_url in build_release_targets(index, f"{sample_url}.sha256"):
             res = _probe_single(
                 client,
@@ -451,7 +456,10 @@ def verify_all(
                 max_bytes=4096,
             )
             results.append(res)
+            if res.ok:
+                p_sha_ok += 1
 
+        p_range_ok = 0
         if check_assets:
             for role, mirror, asset_url in build_release_targets(index, sample_url):
                 res = _probe_single(
@@ -466,6 +474,13 @@ def verify_all(
                     expected_statuses=(200, 206),
                 )
                 results.append(res)
+                if res.ok:
+                    p_range_ok += 1
+
+        if p_sha_ok < min_release:
+            per_plugin_ok = False
+        if check_assets and (p_icon_ok < min_raw or p_range_ok < min_release):
+            per_plugin_ok = False
 
     raw_ok = sum(1 for r in results if r.role in {"raw", "jsdelivr", "raw_direct", "raw_canonical"} and r.ok)
     release_ok = sum(1 for r in results if r.role in {"release", "release_canonical"} and r.ok)
@@ -476,7 +491,7 @@ def verify_all(
     if check_assets:
         assets_ok = icon_ok >= min_raw and range_ok >= min_release
 
-    passed = raw_ok >= min_raw and release_ok >= min_release and assets_ok
+    passed = raw_ok >= min_raw and release_ok >= min_release and assets_ok and per_plugin_ok
     return {
         "passed": passed,
         "probe_relpath": probe_relpath,
@@ -491,6 +506,7 @@ def verify_all(
             "min_release": min_release,
             "plugins_checked": len(validated_plugins),
             "total_probes": len(results),
+            "per_plugin_ok": per_plugin_ok,
         },
         "results": [asdict(r) for r in results],
     }
