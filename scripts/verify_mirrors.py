@@ -501,11 +501,21 @@ class _OfflineMockProbeClient:
 
     def __init__(self, index: dict[str, Any]) -> None:
         self.index = index
-        self.plugin = index["plugins"][0]
+        self.plugins = index["plugins"]
+        self.sidecars_by_suffix = {
+            f"{p['download_url']}.sha256": f"{p['sha256']}  {p['asset_name']}\n".encode("utf-8")
+            for p in self.plugins
+        }
         self.index_bytes = json.dumps(index, ensure_ascii=False).encode("utf-8")
-        self.sidecar_bytes = f"{self.plugin['sha256']}  {self.plugin['asset_name']}\n".encode("utf-8")
         self.png_bytes = PNG_MAGIC + b"\x00\x00\x00\x0dIHDR" + b"\x00" * 16
         self.gzip_bytes = GZIP_MAGIC + b"\x00" * 64
+
+    def _sidecar_for_url(self, url: str) -> bytes:
+        for suffix, payload in self.sidecars_by_suffix.items():
+            if url.endswith(suffix):
+                return payload
+        p0 = self.plugins[0]
+        return f"{p0['sha256']}  {p0['asset_name']}\n".encode("utf-8")
 
     def fetch(
         self,
@@ -529,7 +539,7 @@ class _OfflineMockProbeClient:
             return ProbeResponse(
                 status_code=200,
                 headers={"content-type": "text/plain"},
-                body=self.sidecar_bytes,
+                body=self._sidecar_for_url(url),
                 tls_version="TLSv1.2",
                 latency_ms=8.1,
             )

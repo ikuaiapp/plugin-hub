@@ -21,12 +21,16 @@ EXPECTED_PUBLIC_NAMES = [
     "MeshCentral",
     "vnt2",
     "vnstat",
-]
-EXPECTED_PRIVATE_NAMES = [
     "system-tools",
     "ikev2-cert",
     "Ttyd",
 ]
+EXPECTED_PRIVATE_NAMES: list[str] = []
+EXPECTED_PRIVATE_SOURCE_REPOS = {
+    "system-tools": "ikuaiapp/system-tools",
+    "ikev2-cert": "ikuaiapp/ikev2-acme",
+    "Ttyd": "ikuaiapp/ttyd",
+}
 EXCLUDED_REPOS = {
     "ikuaiapp/reinstall",
     "ikuaiapp/ikuai-plus",
@@ -64,6 +68,7 @@ class CatalogIntegrityTests(unittest.TestCase):
             "description",
             "asset_name",
             "download_url",
+            "mirror_urls",
             "sha256",
             "size",
             "icon",
@@ -75,6 +80,14 @@ class CatalogIntegrityTests(unittest.TestCase):
             self.assertRegex(plugin["name"], build_index.NAME_RE)
             self.assertRegex(plugin["sha256"], build_index.SHA256_RE)
             self.assertGreater(plugin["size"], 0)
+            expected_dl = (
+                f"https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/{plugin['asset_name']}"
+            )
+            self.assertEqual(plugin["download_url"], expected_dl)
+            self.assertEqual(
+                plugin["mirror_urls"],
+                [f"{prefix}{expected_dl}" for prefix in mirrors["release"]],
+            )
             self.assertFalse(re.search(r"[\ufeff\u200b\u200c\u200d]", plugin["description"]))
             self.assertIsInstance(plugin["only_offline_install"], bool)
 
@@ -102,10 +115,10 @@ class CatalogIntegrityTests(unittest.TestCase):
         self.assertEqual(sources_doc["target"]["catalog_version"], version)
         self.assertEqual(sources_doc["target"]["hosting_branch"], "main")
         self.assertEqual(list(sources_doc["upstream"]["plugins"].keys()), EXPECTED_PUBLIC_NAMES)
-        self.assertEqual(
-            [item["name"] for item in sources_doc["upstream"]["pending_private_repos"]],
-            EXPECTED_PRIVATE_NAMES,
-        )
+        self.assertEqual(sources_doc["upstream"]["pending_private_repos"], [])
+        for pname, expected_repo in EXPECTED_PRIVATE_SOURCE_REPOS.items():
+            self.assertEqual(sources_doc["upstream"]["plugins"][pname]["repo"], expected_repo)
+            self.assertEqual(sources_doc["upstream"]["plugins"][pname]["source_visibility"], "private")
 
         catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
         self.assertEqual(
@@ -122,7 +135,7 @@ class CatalogIntegrityTests(unittest.TestCase):
         if jq_bin is None:
             self.skipTest("jq not installed on host")
         proc = subprocess.run(
-            [jq_bin, "-e", ".schema_version == 1 and (.plugins | length) == 6", str(ROOT / "plugins.json")],
+            [jq_bin, "-e", ".schema_version == 1 and (.plugins | length) == 9", str(ROOT / "plugins.json")],
             capture_output=True,
             text=True,
         )

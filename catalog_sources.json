@@ -53,7 +53,10 @@
         "icon_relpath": "router_backup/html/router_backup.png",
         "sha256_relpath": "releases/config-backup-3.7-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "fn-knock",
@@ -82,7 +85,10 @@
         "icon_relpath": "fn-knock/html/fn-knock.png",
         "sha256_relpath": "releases/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "docker",
@@ -111,7 +117,10 @@
         "icon_relpath": "docker/html/docker.png",
         "sha256_relpath": "releases/docker-28.5.2-ikuai-3.7-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "MeshCentral",
@@ -140,7 +149,10 @@
         "icon_relpath": "MeshCentral/html/MeshCentral.png",
         "sha256_relpath": "releases/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "vnt2",
@@ -169,7 +181,10 @@
         "icon_relpath": "vnt2/html/vnt2.png",
         "sha256_relpath": "releases/vnt2-ikuai-3.7.26_x86_64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "vnstat",
@@ -197,13 +212,16 @@
         "metadata_relpath": "payload/html/metadata.json",
         "icon_relpath": "payload/html/vnstat.png",
         "sha256_relpath": "releases/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256"
-      }
+      },
+      "source_visibility": "public",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "system-tools",
       "alias": "系统工具",
       "repo": "ikuaiapp/system-tools",
-      "visibility": "private_pending",
+      "visibility": "public",
       "tag": "v1.1.9",
       "version": "1.1.9",
       "arch": [
@@ -226,13 +244,16 @@
         "icon_relpath": "system-tools/html/system-tools.png",
         "sha256_relpath": "releases/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "private",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "ikev2-cert",
       "alias": "IKEv2证书申请",
       "repo": "ikuaiapp/ikev2-acme",
-      "visibility": "private_pending",
+      "visibility": "public",
       "tag": "v3.1.7",
       "version": "3.1.7",
       "arch": [
@@ -255,13 +276,16 @@
         "icon_relpath": "ikev2-cert/html/ikev2-cert.png",
         "sha256_relpath": "releases/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "private",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     },
     {
       "name": "Ttyd",
       "alias": "Ttyd终端",
       "repo": "ikuaiapp/ttyd",
-      "visibility": "private_pending",
+      "visibility": "public",
       "tag": "v1.7.7",
       "version": "1.7.7",
       "arch": [
@@ -284,7 +308,10 @@
         "icon_relpath": "Ttyd/html/Ttyd.png",
         "sha256_relpath": "releases/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
-      }
+      },
+      "source_visibility": "private",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     }
   ]
 }

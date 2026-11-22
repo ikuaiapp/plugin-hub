@@ -367,6 +367,42 @@ class VerifyMirrorsTests(unittest.TestCase):
             with self.assertRaises(RuntimeError):
                 local_client.fetch(f"https://127.0.0.1:{port}/redir-loop", timeout=2.0)
 
+    def test_release_repo_decoupled_from_source_repo_and_offline_all_plugins_cli(self) -> None:
+        index = _sample_index()
+        index["plugins"][0]["repo"] = "ikuaiapp/system-tools"
+        index["plugins"][0]["name"] = "system-tools"
+        index["plugins"][0]["icon"] = "icons/system-tools.png"
+        index["plugins"][0]["asset_name"] = "system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz"
+        index["plugins"][0]["download_url"] = (
+            "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/"
+            "system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz"
+        )
+        plugin = index["plugins"][0]
+        client = verify_mirrors._OfflineMockProbeClient(index)
+        report = verify_mirrors.verify_all(index, client=client, check_assets=True, all_plugins=True)
+        self.assertTrue(report["passed"])
+        self.assertEqual(report["summary"]["plugins_checked"], 1)
+
+        proc = subprocess.run(
+            [
+                sys.executable,
+                "-B",
+                str(ROOT / "scripts" / "verify_mirrors.py"),
+                "--offline-test",
+                "--all-plugins",
+                "--json",
+            ],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+        )
+        self.assertEqual(proc.returncode, 0, proc.stderr)
+        doc = json.loads(proc.stdout)
+        self.assertTrue(doc["passed"])
+        self.assertTrue(doc["all_plugins"])
+        self.assertEqual(doc["summary"]["plugins_checked"], 9)
+        self.assertIn(plugin["asset_name"][:12], "system-tools")
+
 
 if __name__ == "__main__":
     unittest.main()

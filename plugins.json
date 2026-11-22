@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-21T12:00:00Z",
+  "generated_at": "2026-11-22T08:34:56Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -41,7 +41,15 @@
       ],
       "description": "自定义时间备份爱快路由原生配置，支持本地与当前设备远端 FTP/FTPS 管理及校验恢复",
       "asset_name": "config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/config-backup/releases/download/v3.7/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/config-backup-3.7-ikuai-3.7.x-x64.tar.gz"
+      ],
       "sha256": "d6a6a0216f9a6f8f923fdc918422bc225f205bc0bc6c4261e8cdf17ca91012d9",
       "size": 47239,
       "icon": "icons/router_backup.png",
@@ -63,7 +71,15 @@
       ],
       "description": "fn-knock 管理、每日备份与完整恢复",
       "asset_name": "fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/knock/releases/download/v2.5.11/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz"
+      ],
       "sha256": "2b0293574f72878de1955b3e3f5240b53747bbb640089cea39b274d5ba989e4e",
       "size": 32157989,
       "icon": "icons/fn-knock.png",
@@ -85,7 +101,15 @@
       ],
       "description": "通过Docker功能，用户可以打包应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。",
       "asset_name": "docker-28.5.2-ikuai-3.7-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/docker/releases/download/v28.5.2/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/docker-28.5.2-ikuai-3.7-x64.tar.gz"
+      ],
       "sha256": "56157c934f3816f4ae6c53b6d070f359453b092bd375668a211fbcddb1f4600c",
       "size": 100046010,
       "icon": "icons/docker.png",
@@ -107,7 +131,15 @@
       ],
       "description": "在爱快路由器本机运行 MeshCentral 1.3.1 远程管理平台（适配 iKuai 3.7.26 x64）",
       "asset_name": "MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/MeshCentral/releases/download/v3.7.26/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz"
+      ],
       "sha256": "ad93f61b8e2245755300b380a027c73b3435bd750d3bef3323758cbff103daec",
       "size": 125786787,
       "icon": "icons/MeshCentral.png",
@@ -129,7 +161,15 @@
       ],
       "description": "VNT 2.x 客户端与 VNTS 服务端爱快一体化管理套件。",
       "asset_name": "vnt2-ikuai-3.7.26_x86_64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/vnt/releases/download/v3.7.26/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz"
+      ],
       "sha256": "8d445017c3c22504187e4b753e4c08b97c8b7db79a49e419597e8c51a63a5e7f",
       "size": 11940298,
       "icon": "icons/vnt2.png",
@@ -151,12 +191,110 @@
       ],
       "description": "WAN出口与每接口独立账期流量统计（内置 vnStat 2.14）",
       "asset_name": "vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/vnstat/releases/download/v3.7.26/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz"
+      ],
       "sha256": "45ceebeafea81de5bf5be66948b750adbe1fff7f4e1a04fcfe2ba9b180c08600",
       "size": 1395719,
       "icon": "icons/vnstat.png",
       "manufacturer": "vnStat / ikuaiapp",
       "releasenotes": "",
+      "only_offline_install": false
+    },
+    {
+      "name": "system-tools",
+      "alias": "系统工具",
+      "repo": "ikuaiapp/system-tools",
+      "tag": "v1.1.9",
+      "version": "1.1.9",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件",
+      "asset_name": "system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/system-tools-1.1.9-ikuai-3.7.x-x64.tar.gz"
+      ],
+      "sha256": "c50c5f79ff26b144db52f807e2e2fc5d77f3243547ff575351270e25401e40f6",
+      "size": 284169,
+      "icon": "icons/system-tools.png",
+      "manufacturer": "ikuaiapp",
+      "releasenotes": "",
+      "only_offline_install": false
+    },
+    {
+      "name": "ikev2-cert",
+      "alias": "IKEv2证书申请",
+      "repo": "ikuaiapp/ikev2-acme",
+      "tag": "v3.1.7",
+      "version": "3.1.7",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7）",
+      "asset_name": "ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ikev2-acme-3.1.7-ikuai-3.7.x-x64.tar.gz"
+      ],
+      "sha256": "dd60e3b0b5cf83a3d32f9f4e859019b6a0d252c85b79da4dc5ac0d5e246fcfa6",
+      "size": 113141,
+      "icon": "icons/ikev2-cert.png",
+      "manufacturer": "本地插件适配",
+      "releasenotes": "",
+      "only_offline_install": false
+    },
+    {
+      "name": "Ttyd",
+      "alias": "Ttyd终端",
+      "repo": "ikuaiapp/ttyd",
+      "tag": "v1.7.7",
+      "version": "1.7.7",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。",
+      "asset_name": "ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz"
+      ],
+      "sha256": "98da2f68cd5959dedb1c7059d364b00dd54e5997fd0e13a23d5da9665c8a9e2f",
+      "size": 930568,
+      "icon": "icons/Ttyd.png",
+      "manufacturer": "iKuai",
+      "releasenotes": "升级上游 ttyd 至 1.7.7，配置与运行日志迁移至 /etc/log 并支持有界轮转，全面兼容 iKuai 3.7.x x64。",
       "only_offline_install": false
     }
   ]

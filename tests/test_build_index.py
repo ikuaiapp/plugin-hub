@@ -419,6 +419,122 @@ class BuildIndexTests(unittest.TestCase):
             )
             self.assertEqual(proc_src.returncode, 0, proc_src.stderr)
 
+    def test_release_repo_and_release_tag_override_download_url(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources_path, out_path = self._create_fixture_repo(root, visibility="public")
+            raw_sources = json.loads(sources_path.read_text(encoding="utf-8"))
+            for entry in raw_sources["sources"]:
+                entry["release_repo"] = "ikuaiapp/plugin-hub"
+                entry["release_tag"] = "v1.0.0"
+            sources_path.write_text(json.dumps(raw_sources), encoding="utf-8")
+
+            requested_urls: list[str] = []
+
+            def _fake_fetch(url: str) -> str:
+                requested_urls.append(url)
+                if "demo-1.2.3" in url:
+                    return f"{'a' * 64}  demo-1.2.3.tar.gz\n"
+                return f"{'b' * 64}  pending-0.1.0.tar.gz\n"
+
+            doc = build_index.build_index(
+                sources_path=sources_path,
+                output_path=out_path,
+                generated_at="2026-11-22T08:00:00Z",
+                verify_remote=True,
+                remote_fetcher=_fake_fetch,
+                repo_root=root,
+            )
+            self.assertEqual(len(doc["plugins"]), 2)
+            self.assertEqual(doc["plugins"][0]["repo"], "ikuaiapp/demo-repo")
+            self.assertEqual(doc["plugins"][0]["tag"], "v1.2.3")
+            self.assertEqual(
+                doc["plugins"][0]["download_url"],
+                "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/demo-1.2.3.tar.gz",
+            )
+            self.assertEqual(
+                doc["plugins"][0]["mirror_urls"],
+                [
+                    "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/demo-1.2.3.tar.gz"
+                ],
+            )
+            self.assertEqual(doc["plugins"][1]["repo"], "ikuaiapp/pending-repo")
+            self.assertEqual(doc["plugins"][1]["tag"], "v0.1.0")
+            self.assertEqual(
+                doc["plugins"][1]["download_url"],
+                "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/pending-0.1.0.tar.gz",
+            )
+            self.assertEqual(
+                requested_urls,
+                [
+                    "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/demo-1.2.3.tar.gz.sha256",
+                    "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/pending-0.1.0.tar.gz.sha256",
+                ],
+            )
+
+    def test_rejects_invalid_release_repo_release_tag_and_symlinked_icons_dir(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources_path, out_path = self._create_fixture_repo(root)
+            base = json.loads(sources_path.read_text(encoding="utf-8"))
+
+            for label, field, bad_val in (
+                ("non-ikuaiapp release_repo", "release_repo", "otherorg/plugin-hub"),
+                ("traversal release_repo", "release_repo", "ikuaiapp/../../evil"),
+                ("empty slug release_repo", "release_repo", "ikuaiapp/"),
+                ("non-string release_repo", "release_repo", None),
+                ("traversal release_tag", "release_tag", "../v1.0.0"),
+                ("empty release_tag", "release_tag", ""),
+                ("non-string release_tag", "release_tag", 123),
+            ):
+                mut = copy.deepcopy(base)
+                mut["sources"][0][field] = bad_val
+                sources_path.write_text(json.dumps(mut), encoding="utf-8")
+                with self.subTest(label=label):
+                    with self.assertRaises(build_index.BuildIndexError):
+                        build_index.build_index(
+                            sources_path=sources_path,
+                            output_path=out_path,
+                            repo_root=root,
+                        )
+
+            # Symlinked icons/ parent directory must be refused by --sync-icons
+            sources_path.write_text(json.dumps(base), encoding="utf-8")
+            src_root = root / "sibling"
+            plugin_dir = src_root / "demo-repo"
+            (plugin_dir / "html").mkdir(parents=True)
+            (plugin_dir / "releases").mkdir(parents=True)
+            (plugin_dir / "html" / "metadata.json").write_text(
+                json.dumps({"name": "demo_app", "alias": "Demo App", "version": "1.2.3"}),
+                encoding="utf-8",
+            )
+            (plugin_dir / "html" / "demo_app.png").write_bytes(_make_png(16, 16))
+            (plugin_dir / "releases" / "demo-1.2.3.tar.gz.sha256").write_text(
+                f"{'a' * 64}  demo-1.2.3.tar.gz\n", encoding="utf-8"
+            )
+            mut_src = copy.deepcopy(base)
+            mut_src["sources"][0]["local_source"] = {
+                "dir": "demo-repo",
+                "metadata_relpath": "html/metadata.json",
+                "icon_relpath": "html/demo_app.png",
+                "sha256_relpath": "releases/demo-1.2.3.tar.gz.sha256",
+            }
+            sources_path.write_text(json.dumps(mut_src), encoding="utf-8")
+            evil_dir = root / "evil_icons_dir"
+            evil_dir.mkdir()
+            import shutil as _shutil
+
+            _shutil.rmtree(root / "icons")
+            (root / "icons").symlink_to(evil_dir)
+            with self.assertRaises(build_index.BuildIndexError):
+                build_index.build_index(
+                    sources_path=sources_path,
+                    output_path=out_path,
+                    source_root=src_root,
+                    sync_icons=True,
+                    repo_root=root,
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

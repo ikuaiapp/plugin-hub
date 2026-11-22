@@ -338,6 +338,14 @@ def build_index(
 
         if not isinstance(tag, str) or not TAG_RE.match(tag) or ".." in tag:
             raise BuildIndexError(f"{name}: invalid tag {tag!r}")
+        release_repo = entry["release_repo"] if "release_repo" in entry else repo
+        if not isinstance(release_repo, str) or not REPO_RE.match(release_repo) or ".." in release_repo:
+            raise BuildIndexError(
+                f"{name}: release_repo must match '^ikuaiapp/[A-Za-z0-9._-]+$' without '..', got {release_repo!r}"
+            )
+        release_tag = entry["release_tag"] if "release_tag" in entry else tag
+        if not isinstance(release_tag, str) or not TAG_RE.match(release_tag) or ".." in release_tag:
+            raise BuildIndexError(f"{name}: invalid release_tag {release_tag!r}")
         if not isinstance(version, str) or not version.strip():
             raise BuildIndexError(f"{name}: version must be a non-empty string")
         if not isinstance(asset_name, str) or not ASSET_RE.match(asset_name) or ".." in asset_name:
@@ -354,7 +362,8 @@ def build_index(
         if icon_rel != expected_icon:
             raise BuildIndexError(f"{name}: icon must be {expected_icon!r}, got {icon_rel!r}")
 
-        download_url = f"https://github.com/{repo}/releases/download/{tag}/{asset_name}"
+        download_url = f"https://github.com/{release_repo}/releases/download/{release_tag}/{asset_name}"
+        mirror_urls = [f"{prefix}{download_url}" for prefix in mirrors["release"]]
 
         alias = strip_invisible(str(entry.get("alias", "")))
         description = strip_invisible(str(entry.get("description", "")))
@@ -456,16 +465,28 @@ def build_index(
             )
             src_icon_bytes = validate_png_file(src_icon_path, f"{name} source icon")
             if sync_icons:
+                if dest_icon_path.parent.is_symlink():
+                    raise BuildIndexError(
+                        f"{name}: refusing symlinked destination icon directory: {dest_icon_path.parent}"
+                    )
                 if dest_icon_path.is_symlink():
                     raise BuildIndexError(f"{name}: refusing symlinked destination icon: {dest_icon_path}")
                 _atomic_write_bytes(dest_icon_path, src_icon_bytes)
             else:
+                if dest_icon_path.parent.is_symlink():
+                    raise BuildIndexError(
+                        f"{name}: refusing symlinked repo icon directory: {dest_icon_path.parent}"
+                    )
                 dest_icon_bytes = validate_png_file(dest_icon_path, f"{name} repo icon")
                 if dest_icon_bytes != src_icon_bytes:
                     raise BuildIndexError(
                         f"{name}: {expected_icon} differs from {src_icon_path} (run with --sync-icons)"
                     )
         else:
+            if dest_icon_path.parent.is_symlink():
+                raise BuildIndexError(
+                    f"{name}: refusing symlinked repo icon directory: {dest_icon_path.parent}"
+                )
             validate_png_file(dest_icon_path, f"{name} repo icon")
 
         if not alias:
@@ -495,6 +516,7 @@ def build_index(
                 "description": description,
                 "asset_name": asset_name,
                 "download_url": download_url,
+                "mirror_urls": mirror_urls,
                 "sha256": sha256,
                 "size": size,
                 "icon": expected_icon,

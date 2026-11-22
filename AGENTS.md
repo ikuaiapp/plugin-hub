@@ -11,9 +11,10 @@ All autonomous and cooperating AI agents working in this repository MUST follow 
 - **Catalog version (`VERSION`)**: SemVer catalog/tooling version starting at **`1.0.0`** (independent of individual plugin release versions, paired with `plugins.json` `schema_version: 1`).
   - Bump PATCH (`1.0.1`) or MINOR (`1.1.0`) when updating indexed plugin versions, adding newly public plugins, adjusting mirrors, or updating scripts/docs.
   - Bump MAJOR (`2.0.0`) only when making breaking changes to the `plugins.json` `schema_version` contract.
-- **`ikuaiapp`-Only & Public-Only Inclusion Rule**:
+- **`ikuaiapp`-Only & Unified `plugin-hub` Release Hosting Rule**:
   - Index ONLY usable released plugin repositories under `ikuaiapp/*`. Never duplicate local build leftovers or index non-plugin VPS installers (`reinstall`, `ikuai-plus`).
-  - Keep `PRIVATE` repositories (`system-tools`, `ikev2-acme`, `ttyd`) marked `"visibility": "private_pending"` in `catalog_sources.json` and documented in `pending_private_plugins.md` — NEVER emit private repositories into `plugins.json` or `icons/` until their GitHub visibility is flipped to `public`.
+  - Host all 9 audited plugin `.tar.gz` + `.tar.gz.sha256` assets in public `ikuaiapp/plugin-hub` GitHub Releases (e.g., `v1.0.0`) via `release_repo` / `release_tag` in `catalog_sources.json` so all `download_url` and `mirror_urls` fields in `plugins.json` resolve against `https://github.com/ikuaiapp/plugin-hub/releases/download/...` while keeping upstream `repo` / `tag` provenance intact (allowing `system-tools`, `ikev2-acme`, `ttyd`, or any other upstream source repo to remain or become `PRIVATE` without causing HTTP `404` on routers). NEVER commit `.tar.gz` blobs into Git history.
+  - Never emit an unhosted `PRIVATE` upstream URL directly into `plugins.json`: any entry marked `"visibility": "private_pending"` or `"disabled"` is excluded from `plugins.json`.
 - **`metadata.json.name` Invariant**:
   - Every `plugins[].name` MUST match the exact `name` inside the plugin's `html/metadata.json` (`^[A-Za-z0-9][A-Za-z0-9._-]*$`), even when it differs from the GitHub repository name (`router_backup` for `config-backup`, `fn-knock` for `knock`, `vnt2` for `vnt`, `ikev2-cert` for `ikev2-acme`, `Ttyd` for `ttyd`). `plugin-store` relies on exact `name` parity to hide installed plugins from the online list and restore them upon uninstall.
 - **Synchronization Checklist**: Keep these files aligned when bumping `VERSION` or updating catalog entries:
@@ -27,14 +28,14 @@ All autonomous and cooperating AI agents working in this repository MUST follow 
 
 - `VERSION`: Single-line catalog SemVer (`1.0.0`).
 - `GITHUB_METADATA.json`: Offline-staged GitHub repository Description, Homepage, and Topics for post-confirmation `gh repo edit`.
-- `SOURCES.json`: Provenance manifest pinning all indexed `ikuaiapp/*` plugin release coordinates, SHA-256 checksums, icon source paths/hashes, mirror lists, and pending private repositories.
-- `catalog_sources.json`: Authoritative generator input containing `mirrors` and all 9 `ikuaiapp` plugin records (`public` + `private_pending`) with relative `local_source` hints (never absolute host paths).
-- `plugins.json`: Deterministic generated catalog (`schema_version: 1`) consumed directly from the `main` branch by `plugin-store`.
-- `pending_private_plugins.md`: Tracking document and promotion checklist for `system-tools`, `ikev2-cert`, and `Ttyd`.
-- `icons/<name>.png`: Regular-file PNG icons (`<= 1 MiB`, valid `IHDR`, **zero symlinks**) extracted from each public plugin's `<name>.png` (never `logo.png`, because `MeshCentral` lacks `logo.png` and `vnt2/html/logo.png` is a symlink).
+- `SOURCES.json`: Provenance manifest pinning all 9 indexed `ikuaiapp/*` plugin release coordinates, `source_visibility`, `release_repo`/`release_tag`, SHA-256 checksums, icon source paths/hashes, and mirror lists.
+- `catalog_sources.json`: Authoritative generator input containing `mirrors` and all 9 `ikuaiapp` plugin records (`release_repo: "ikuaiapp/plugin-hub"`, `release_tag: "v1.0.0"`, `source_visibility`) with relative `local_source` hints (never absolute host paths).
+- `plugins.json`: Deterministic generated catalog (`schema_version: 1`, 9 entries) consumed directly from the `main` branch by `plugin-store`.
+- `pending_private_plugins.md`: Sync record and pre-upload audit checklist for private-source plugins (`system-tools`, `ikev2-cert`, `Ttyd`) hosted via `plugin-hub` Release `v1.0.0`.
+- `icons/<name>.png`: Regular-file PNG icons (`<= 1 MiB`, valid `IHDR`, **zero symlinks**) extracted from each indexed plugin's `<name>.png` (never `logo.png`, because `MeshCentral` lacks `logo.png` and `vnt2/html/logo.png` is a symlink).
 - `scripts/`:
-  - `build_index.py`: Deterministic catalog builder/validator (`--sources`, `--output`, `--source-root`, `--generated-at`, `SOURCE_DATE_EPOCH`, `--check`, `--sync-icons`, `--verify-remote`). Sanitizes invisible Unicode characters (`\ufeff\u200b\u200c\u200d`, e.g., `docker` description) and normalizes `onlyOfflineInstall` to boolean `only_offline_install`.
-  - `verify_mirrors.py`: Mirror probe tool enforcing TLS 1.2 bounds (`ssl.TLSVersion.TLSv1_2`), IPv4 connection preference, HTTP `200` HTML-portal rejection, JSON/PNG/`.sha256`/Range-gzip checks, and `--offline-test` / injectable `ProbeClient`.
+  - `build_index.py`: Deterministic catalog builder/validator (`--sources`, `--output`, `--source-root`, `--generated-at`, `SOURCE_DATE_EPOCH`, `--check`, `--sync-icons`, `--verify-remote`), supporting `release_repo`/`release_tag` overrides, generating per-plugin `mirror_urls`, refusing symlinked `icons/` directories/files, sanitizing invisible Unicode characters (`\ufeff\u200b\u200c\u200d`), and normalizing `onlyOfflineInstall` to boolean `only_offline_install`.
+  - `verify_mirrors.py`: Mirror probe tool enforcing TLS 1.2 bounds (`ssl.TLSVersion.TLSv1_2`), IPv4 connection preference, HTTP `200` HTML-portal rejection, JSON/PNG/`.sha256`/Range-gzip checks, `--all-plugins`, and `--offline-test` / injectable `ProbeClient`.
   - `public_audit.py`: Mandatory desensitization scanner (`--working-tree` and `--history <REVISION>`).
 - `tests/`: Pure Python stdlib `unittest` suite (`test_build_index.py`, `test_verify_mirrors.py`, `test_catalog_integrity.py`, `test_public_audit.py`) runnable offline with zero network calls.
 
