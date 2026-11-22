@@ -42,10 +42,14 @@
 
 ---
 
-## 4. 未实测范围（Pending Live Verification）
+## 4. 实时镜像连通性与实机端到端验证（M4，2026-11-22）
 
-- **离线构建沙箱外网限制**：当前构建验证环境无外部 DNS（真实探测返回 `Temporary failure in name resolution`），因此外网公网镜像实时连通性与 `plugin-hub` 推送后由真实路由器发起的端到端拉取安装尚待在联网环境及测试路由器上完成并补充实测记录：
-  ```bash
-  python3 scripts/verify_mirrors.py --check-assets --json
-  ```
+- **构建主机外网镜像探测**（`python3 scripts/verify_mirrors.py --check-assets --json`）：
+  - 在 `ikuaiapp/plugin-hub` 尚未推送至 GitHub `main`（按发布确认门控保持未推送）时，`plugins.json` 与 `icons/router_backup.png` 的 `raw`/`jsdelivr` 探测按预期返回 `404`/`403`（`raw_ok: 0`、`icon_ok: 0`）。
+  - 公开 Release 资产（`config-backup`）探测：`release_ok: 4`（`gh-proxy.org`、`ghfast.top`、`cdn.gh-proxy.com`、`edgeone.gh-proxy.com` 返回 `HTTP 200` `TLSv1.2`）与 `range_ok: 4`（`cdn.gh-proxy.com`、`edgeone.gh-proxy.com`、`wget.la`、`github.com` 返回 `HTTP 206` `512` 字节 `TLSv1.2`）。
+- **测试路由器实机镜像探活（6 个公开插件发布包）**：
+  - 在 `iKuai 3.7.26 x64` 测试路由器上使用 `curl -4 -fSL --tlsv1.2 -r 0-511` 实测所有 6 个收录插件（`router_backup`、`fn-knock`、`docker`、`MeshCentral`、`vnt2`、`vnstat`）：每个插件均有 `3`–`4` 个中国大陆镜像节点返回 `HTTP 206` 与 gzip 魔数 `1f8b`（`ghfast.top`、`wget.la`、`cdn.gh-proxy.com`、`edgeone.gh-proxy.com`、`gh-proxy.org`），个别镜像 DNS 超时或返回 `403` 时可正常触发故障转移。
+- **测试路由器实机索引拉取与安装/卸载联动**：
+  - 通过局域网临时 HTTP 索引服务向路由器下发 `plugins.json` 并调用 `plugin-store v2.1.0` 的 `set_hub_url` / `refresh_hub` / `uninstall` / `install_online`：卸载 `router_backup` 后其自动进入 `online` 列表，触发 `install_online` 后由路由器经 `ghfast.top` 拉取真实 GitHub Release 压缩包（`14.52s`）、完成 SHA-256 校验与安装并从 `online` 移除、回到 `installed` 列表；随后恢复默认 `plugins.json` 源地址。
+  - **推送后待补复核**：`main` 分支经仓库所有者确认并推送至 GitHub 后，需再执行一次 `python3 scripts/verify_mirrors.py --check-assets --json` 验证 `raw_ok >= 1`。
 - **远程推送门控**：依据安全规则，尚未向 `origin`（`https://github.com/ikuaiapp/plugin-hub.git`）执行 `git push` 或修改 GitHub 仓库元数据，等待仓库所有者确认。
