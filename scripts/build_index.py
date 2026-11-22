@@ -12,6 +12,7 @@ import struct
 import sys
 import tempfile
 import urllib.error
+import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
@@ -24,6 +25,9 @@ DEFAULT_OUTPUT = REPO_ROOT / "plugins.json"
 MAX_ICON_BYTES = 1024 * 1024
 PNG_MAGIC = b"\x89PNG\r\n\x1a\n"
 NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]*$")
+REPO_RE = re.compile(r"^ikuaiapp/[A-Za-z0-9._-]+$")
+TAG_RE = re.compile(r"^[A-Za-z0-9._+-]+$")
+ASSET_RE = re.compile(r"^[A-Za-z0-9._-]+$")
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 ISO_UTC_RE = re.compile(r"^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$")
 INVISIBLE_CHARS_RE = re.compile(r"[\ufeff\u200b\u200c\u200d]")
@@ -84,8 +88,11 @@ def validate_png_file(path: Path, label: str) -> bytes:
         raise BuildIndexError(f"{label}: icon exceeds {MAX_ICON_BYTES} bytes ({len(data)} bytes): {path}")
     if not data.startswith(PNG_MAGIC):
         raise BuildIndexError(f"{label}: invalid PNG magic header: {path}")
-    if len(data) < 24 or data[12:16] != b"IHDR":
+    if len(data) < 33 or data[12:16] != b"IHDR":
         raise BuildIndexError(f"{label}: missing PNG IHDR chunk: {path}")
+    ihdr_len = struct.unpack(">I", data[8:12])[0]
+    if ihdr_len != 13:
+        raise BuildIndexError(f"{label}: invalid PNG IHDR length {ihdr_len}: {path}")
     width, height = struct.unpack(">II", data[16:24])
     if width <= 0 or height <= 0:
         raise BuildIndexError(f"{label}: invalid PNG dimensions {width}x{height}: {path}")
@@ -132,9 +139,27 @@ def _validate_mirrors(mirrors: Any) -> dict[str, list[str]]:
             raise BuildIndexError(f"mirrors.{key} must be a non-empty list")
         cleaned_list: list[str] = []
         for idx, url in enumerate(entries):
-            if not isinstance(url, str) or not url.startswith("https://") or not url.endswith("/"):
+            if not isinstance(url, str) or not url.endswith("/"):
                 raise BuildIndexError(
                     f"mirrors.{key}[{idx}] must be an https:// URL ending with '/': {url!r}"
+                )
+            if any(ord(ch) < 32 or ord(ch) == 127 or ch.isspace() for ch in url):
+                raise BuildIndexError(
+                    f"mirrors.{key}[{idx}] contains invalid whitespace or control characters: {url!r}"
+                )
+            parsed = urllib.parse.urlsplit(url)
+            host = (parsed.hostname or "").lower()
+            if (
+                parsed.scheme != "https"
+                or not parsed.netloc
+                or not host
+                or parsed.username is not None
+                or parsed.password is not None
+                or "@" in parsed.netloc
+                or "github.io" in host
+            ):
+                raise BuildIndexError(
+                    f"mirrors.{key}[{idx}] must be a valid https:// mirror URL without userinfo or github.io: {url!r}"
                 )
             cleaned_list.append(url)
         normalized[key] = cleaned_list
@@ -206,12 +231,14 @@ def _resolve_generated_at(
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"), False
 
 
-def _atomic_write_text(target: Path, content: str) -> None:
+def _atomic_write_bytes(target: Path, content: bytes) -> None:
+    if target.is_symlink():
+        raise BuildIndexError(f"refusing to write through symlink: {target}")
     target.parent.mkdir(parents=True, exist_ok=True)
     fd, tmp_name = tempfile.mkstemp(prefix=f".{target.name}.", suffix=".tmp", dir=target.parent)
     tmp_path = Path(tmp_name)
     try:
-        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as handle:
+        with os.fdopen(fd, "wb") as handle:
             handle.write(content)
             handle.flush()
             os.fsync(handle.fileno())
@@ -221,6 +248,23 @@ def _atomic_write_text(target: Path, content: str) -> None:
         if tmp_path.exists():
             tmp_path.unlink(missing_ok=True)
         raise
+
+
+def _atomic_write_text(target: Path, content: str) -> None:
+    _atomic_write_bytes(target, content.encode("utf-8"))
+
+
+def _resolve_contained_path(base_dir: Path, rel_val: Any, label: str) -> Path:
+    if not isinstance(rel_val, str) or not rel_val or rel_val.strip() != rel_val:
+        raise BuildIndexError(f"{label} must be a non-empty relative path")
+    rel_path = Path(rel_val)
+    if rel_path.is_absolute():
+        raise BuildIndexError(f"{label} must be a relative path, got {rel_val!r}")
+    base_resolved = base_dir.resolve()
+    candidate = (base_resolved / rel_path).resolve()
+    if candidate == base_resolved or not candidate.is_relative_to(base_resolved):
+        raise BuildIndexError(f"{label} escapes base directory: {rel_val!r}")
+    return candidate
 
 
 def build_index(
@@ -276,8 +320,8 @@ def build_index(
         seen_names.add(name)
 
         repo = entry.get("repo")
-        if not isinstance(repo, str) or not repo.startswith("ikuaiapp/") or "/" not in repo:
-            raise BuildIndexError(f"{name}: repo must start with 'ikuaiapp/', got {repo!r}")
+        if not isinstance(repo, str) or not REPO_RE.match(repo) or ".." in repo:
+            raise BuildIndexError(f"{name}: repo must match '^ikuaiapp/[A-Za-z0-9._-]+$' without '..', got {repo!r}")
         if repo in seen_repos:
             raise BuildIndexError(f"duplicate plugin repo: {repo!r}")
         seen_repos.add(repo)
@@ -292,9 +336,12 @@ def build_index(
         size = entry.get("size")
         icon_rel = entry.get("icon")
 
-        for field_name, field_val in (("tag", tag), ("version", version), ("asset_name", asset_name)):
-            if not isinstance(field_val, str) or not field_val.strip():
-                raise BuildIndexError(f"{name}: {field_name} must be a non-empty string")
+        if not isinstance(tag, str) or not TAG_RE.match(tag) or ".." in tag:
+            raise BuildIndexError(f"{name}: invalid tag {tag!r}")
+        if not isinstance(version, str) or not version.strip():
+            raise BuildIndexError(f"{name}: version must be a non-empty string")
+        if not isinstance(asset_name, str) or not ASSET_RE.match(asset_name) or ".." in asset_name:
+            raise BuildIndexError(f"{name}: invalid asset_name {asset_name!r}")
         if not isinstance(sha256, str) or not SHA256_RE.match(sha256):
             raise BuildIndexError(f"{name}: sha256 must be 64 lowercase hex characters, got {sha256!r}")
         if isinstance(size, bool) or not isinstance(size, int) or size <= 0:
@@ -323,17 +370,16 @@ def build_index(
             local_source = entry.get("local_source")
             if not isinstance(local_source, dict):
                 raise BuildIndexError(f"{name}: missing local_source object for --source-root validation")
-            local_dir_name = local_source.get("dir")
-            if not isinstance(local_dir_name, str) or not local_dir_name:
-                raise BuildIndexError(f"{name}: local_source.dir must be non-empty")
-            local_dir = source_root / local_dir_name
+            local_dir = _resolve_contained_path(
+                source_root, local_source.get("dir"), f"{name}.local_source.dir"
+            )
             if not local_dir.is_dir():
                 raise BuildIndexError(f"{name}: source repo directory not found: {local_dir}")
 
-            meta_rel = local_source.get("metadata_relpath")
-            if not isinstance(meta_rel, str) or not meta_rel:
-                raise BuildIndexError(f"{name}: missing local_source.metadata_relpath")
-            metadata = _load_json(local_dir / meta_rel, f"{name} metadata.json")
+            meta_path = _resolve_contained_path(
+                local_dir, local_source.get("metadata_relpath"), f"{name}.local_source.metadata_relpath"
+            )
+            metadata = _load_json(meta_path, f"{name} metadata.json")
             if metadata.get("name") != name:
                 raise BuildIndexError(
                     f"{name}: metadata.json name {metadata.get('name')!r} != {name!r}"
@@ -356,10 +402,9 @@ def build_index(
                     metadata["only_offline_install"], f"{name}.metadata.only_offline_install"
                 )
 
-            sha_rel = local_source.get("sha256_relpath")
-            if not isinstance(sha_rel, str) or not sha_rel:
-                raise BuildIndexError(f"{name}: missing local_source.sha256_relpath")
-            sha_path = local_dir / sha_rel
+            sha_path = _resolve_contained_path(
+                local_dir, local_source.get("sha256_relpath"), f"{name}.local_source.sha256_relpath"
+            )
             if not sha_path.is_file():
                 raise BuildIndexError(f"{name}: missing .sha256 sidecar: {sha_path}")
             sidecar_digest, sidecar_file = parse_sha256_sidecar(
@@ -389,7 +434,10 @@ def build_index(
 
             manifest_rel = local_source.get("manifest_relpath")
             if manifest_rel:
-                manifest = _load_json(local_dir / str(manifest_rel), f"{name} BUILD-MANIFEST.json")
+                manifest_path = _resolve_contained_path(
+                    local_dir, manifest_rel, f"{name}.local_source.manifest_relpath"
+                )
+                manifest = _load_json(manifest_path, f"{name} BUILD-MANIFEST.json")
                 if manifest.get("package") != asset_name:
                     raise BuildIndexError(
                         f"{name}: BUILD-MANIFEST package {manifest.get('package')!r} != {asset_name!r}"
@@ -403,15 +451,14 @@ def build_index(
                         f"{name}: BUILD-MANIFEST size_bytes {manifest['size_bytes']} != {size}"
                     )
 
-            icon_src_rel = local_source.get("icon_relpath")
-            if not isinstance(icon_src_rel, str) or not icon_src_rel:
-                raise BuildIndexError(f"{name}: missing local_source.icon_relpath")
-            src_icon_path = local_dir / icon_src_rel
+            src_icon_path = _resolve_contained_path(
+                local_dir, local_source.get("icon_relpath"), f"{name}.local_source.icon_relpath"
+            )
             src_icon_bytes = validate_png_file(src_icon_path, f"{name} source icon")
             if sync_icons:
-                dest_icon_path.parent.mkdir(parents=True, exist_ok=True)
-                dest_icon_path.write_bytes(src_icon_bytes)
-                os.chmod(dest_icon_path, 0o644)
+                if dest_icon_path.is_symlink():
+                    raise BuildIndexError(f"{name}: refusing symlinked destination icon: {dest_icon_path}")
+                _atomic_write_bytes(dest_icon_path, src_icon_bytes)
             else:
                 dest_icon_bytes = validate_png_file(dest_icon_path, f"{name} repo icon")
                 if dest_icon_bytes != src_icon_bytes:

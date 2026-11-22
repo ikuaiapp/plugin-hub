@@ -3,10 +3,16 @@
 from __future__ import annotations
 
 import json
+import socket
+import ssl
 import subprocess
 import sys
+import threading
+import tempfile
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+from unittest import mock
 
 from scripts import verify_mirrors
 
@@ -213,6 +219,153 @@ class VerifyMirrorsTests(unittest.TestCase):
         self.assertEqual(doc["mode"], "offline_test")
         self.assertGreaterEqual(doc["summary"]["raw_ok"], 1)
         self.assertGreaterEqual(doc["summary"]["release_ok"], 1)
+
+    def test_incomplete_plugin_entry_exits_2_without_traceback_and_all_plugins_mode(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            bad_idx = Path(tmp) / "bad_plugins.json"
+            bad_idx.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "hub_repo": "ikuaiapp/plugin-hub",
+                        "mirrors": {"raw": ["https://gh-proxy.org/"], "release": ["https://gh-proxy.org/"]},
+                        "plugins": [{"name": "incomplete"}],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            proc = subprocess.run(
+                [sys.executable, str(ROOT / "scripts" / "verify_mirrors.py"), "--index", str(bad_idx)],
+                cwd=ROOT,
+                capture_output=True,
+                text=True,
+            )
+            self.assertEqual(proc.returncode, 2)
+            self.assertNotIn("Traceback", proc.stderr)
+            self.assertIn("verify_mirrors error:", proc.stderr)
+
+        idx = _sample_index()
+        p2 = dict(idx["plugins"][0])
+        p2["name"] = "second_plugin"
+        p2["icon"] = "icons/second_plugin.png"
+        p2["asset_name"] = "second-1.0.tar.gz"
+        p2["download_url"] = "https://github.com/ikuaiapp/second/releases/download/v1.0/second-1.0.tar.gz"
+        idx["plugins"].append(p2)
+
+        hits: list[str] = []
+
+        class _AllOkClient:
+            def fetch(self, url: str, *, timeout: float, headers: dict[str, str] | None = None, max_bytes: int = 1048576):
+                hits.append(url)
+                if url.endswith("plugins.json"):
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "application/json"}, json.dumps(idx).encode(), "TLSv1.2")
+                if url.endswith(".sha256"):
+                    asset = p2["asset_name"] if "second" in url else idx["plugins"][0]["asset_name"]
+                    sha = idx["plugins"][0]["sha256"]
+                    return verify_mirrors.ProbeResponse(200, {"content-type": "text/plain"}, f"{sha}  {asset}\n".encode(), "TLSv1.2")
+                return verify_mirrors.ProbeResponse(200, {}, b"ok", "TLSv1.2")
+
+        rep = verify_mirrors.verify_all(idx, client=_AllOkClient(), all_plugins=True)
+        self.assertTrue(rep["passed"])
+        self.assertEqual(rep["summary"]["plugins_checked"], 2)
+        self.assertTrue(any("second-1.0.tar.gz.sha256" in u for u in hits))
+
+    def test_urllib_probe_client_tls12_redirects_http_downgrade_and_ssrf_blocking(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            td = Path(tmp)
+            cert = td / "cert.pem"
+            key = td / "key.pem"
+            subprocess.run(
+                [
+                    "openssl",
+                    "req",
+                    "-x509",
+                    "-newkey",
+                    "rsa:2048",
+                    "-keyout",
+                    str(key),
+                    "-out",
+                    str(cert),
+                    "-days",
+                    "1",
+                    "-nodes",
+                    "-subj",
+                    "/CN=127.0.0.1",
+                    "-addext",
+                    "subjectAltName=IP:127.0.0.1,DNS:localhost",
+                ],
+                check=True,
+                capture_output=True,
+            )
+
+            seen_paths: list[str] = []
+
+            class _TLSHandler(BaseHTTPRequestHandler):
+                def log_message(self, fmt: str, *args: object) -> None:
+                    return
+
+                def do_GET(self) -> None:
+                    seen_paths.append(self.path)
+                    if self.path == "/ok":
+                        self.send_response(200)
+                        self.send_header("Content-Type", "text/plain")
+                        self.end_headers()
+                        self.wfile.write(b"tls12-ok")
+                    elif self.path == "/redir-ok":
+                        self.send_response(302)
+                        self.send_header("Location", "/ok")
+                        self.end_headers()
+                    elif self.path == "/redir-http":
+                        self.send_response(302)
+                        self.send_header("Location", "http://127.0.0.1/downgraded")
+                        self.end_headers()
+                    elif self.path == "/redir-loop":
+                        self.send_response(302)
+                        self.send_header("Location", "/redir-loop")
+                        self.end_headers()
+                    else:
+                        self.send_response(404)
+                        self.end_headers()
+
+            srv = ThreadingHTTPServer(("127.0.0.1", 0), _TLSHandler)
+            srv_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)
+            srv_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+            srv_ctx.maximum_version = ssl.TLSVersion.TLSv1_2
+            srv_ctx.load_cert_chain(certfile=str(cert), keyfile=str(key))
+            srv.socket = srv_ctx.wrap_socket(srv.socket, server_side=True)
+            t = threading.Thread(target=srv.serve_forever, daemon=True)
+            t.start()
+            self.addCleanup(srv.shutdown)
+            self.addCleanup(srv.server_close)
+            port = srv.server_address[1]
+
+            cli_ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            cli_ctx.load_verify_locations(cafile=str(cert))
+            cli_ctx.minimum_version = ssl.TLSVersion.TLSv1_2
+            cli_ctx.maximum_version = ssl.TLSVersion.TLSv1_2
+
+            # Default allow_private_hosts=False blocks loopback/private IP targets before connecting
+            ssrf_client = verify_mirrors.UrllibProbeClient(ssl_context=cli_ctx)
+            with self.assertRaises(ValueError):
+                ssrf_client.fetch(f"https://127.0.0.1:{port}/ok", timeout=2.0)
+            with self.assertRaises(ValueError):
+                ssrf_client.fetch("https://" + "10." + "0.0.1/secret", timeout=2.0)
+            with mock.patch("socket.getaddrinfo", return_value=[(socket.AF_INET, socket.SOCK_STREAM, 6, "", ("127.0.0.1", port))]):
+                with self.assertRaises(ValueError):
+                    ssrf_client.fetch(f"https://ssrf.example.test:{port}/ok", timeout=2.0)
+            self.assertEqual(seen_paths, [])
+
+            # Redirect from an allowed connection to loopback must also be blocked
+            local_client = verify_mirrors.UrllibProbeClient(max_redirects=2, allow_private_hosts=True, ssl_context=cli_ctx)
+            resp_ok = local_client.fetch(f"https://127.0.0.1:{port}/redir-ok", timeout=2.0)
+            self.assertEqual(resp_ok.status_code, 200)
+            self.assertEqual(resp_ok.body, b"tls12-ok")
+            self.assertEqual(resp_ok.tls_version, "TLSv1.2")
+
+            with self.assertRaises(ValueError):
+                local_client.fetch(f"https://127.0.0.1:{port}/redir-http", timeout=2.0)
+            with self.assertRaises(RuntimeError):
+                local_client.fetch(f"https://127.0.0.1:{port}/redir-loop", timeout=2.0)
 
 
 if __name__ == "__main__":

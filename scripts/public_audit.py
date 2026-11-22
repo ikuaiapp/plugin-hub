@@ -26,7 +26,7 @@ CONTENT_RULES = (
     (
         "test credential or user",
         re.compile(
-            r"(?:sanjin" + r"168|iks" + r"shd|lihx" + r"linux|lihai" + r"xin)",
+            r"(?:sanjin" + r"168?|iks" + r"shd|lihx" + r"linux|lihai" + r"xin)",
             re.IGNORECASE | re.ASCII,
         ),
     ),
@@ -34,7 +34,7 @@ CONTENT_RULES = (
     ("private key block", re.compile(r"-----BEGIN (?:[A-Z ]+ )?" + r"PRIVATE KEY(?: BLOCK)?-----", re.ASCII)),
     ("GitHub token", re.compile(r"(?:gh[opsu]|github_pat)_[A-Za-z0-9_]{8,}", re.ASCII)),
 )
-SENSITIVE_FILENAMES = {"hosts.yml", ".env"}
+SENSITIVE_FILENAMES = {"hosts.yml", ".env", ".netrc", "id_rsa", "id_ed25519", "id_ecdsa"}
 SENSITIVE_SUFFIXES = {
     ".key",
     ".pem",
@@ -65,9 +65,14 @@ SENSITIVE_SUFFIXES = {
     ".bin",
     ".pkg",
     ".iso",
+    ".img",
+    ".enc",
     ".xz",
     ".7z",
     ".rar",
+    ".so",
+    ".dll",
+    ".exe",
 }
 
 
@@ -100,7 +105,12 @@ def filename_findings(label: str, *, rel_path: str | None = None) -> list[str]:
     rel = safe_label if rel_path is None else _display_safe(rel_path)
     path = Path(rel)
     findings: list[str] = []
-    if path.name.lower() in SENSITIVE_FILENAMES or path.suffix.lower() in SENSITIVE_SUFFIXES:
+    lower_name = path.name.lower()
+    if (
+        lower_name in SENSITIVE_FILENAMES
+        or lower_name.startswith(".env.")
+        or any(s.lower() in SENSITIVE_SUFFIXES for s in path.suffixes)
+    ):
         findings.append(safe_label + ": sensitive filename")
     for name, pattern in CONTENT_RULES:
         if pattern.search(rel):
@@ -180,7 +190,7 @@ def scan_history(root: Path, revision: str) -> list[str]:
         if not commit_bytes:
             continue
         commit = commit_bytes.decode("ascii")
-        message = run_git_bytes(root, "show", "-s", "--format=%B", commit)
+        message = run_git_bytes(root, "show", "-s", "--format=%an%n%ae%n%cn%n%ce%n%B", commit)
         if message.returncode != 0:
             raise RuntimeError(message.stderr.decode("utf-8", errors="replace").strip())
         findings.extend(bytes_findings(commit + ": commit message", message.stdout))

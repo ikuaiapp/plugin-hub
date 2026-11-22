@@ -216,6 +216,109 @@ class BuildIndexTests(unittest.TestCase):
             with self.assertRaises(build_index.BuildIndexError):
                 build_index.build_index(sources_path=sources_path, output_path=out_path, repo_root=root)
 
+    def test_rejects_traversal_bad_mirrors_bad_png_ihdr_and_sync_icons_symlink(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources_path, out_path = self._create_fixture_repo(root)
+            base = json.loads(sources_path.read_text(encoding="utf-8"))
+
+            cases: list[tuple[str, dict]] = []
+            for label, field, bad_val in (
+                ("repo traversal", "repo", "ikuaiapp/../../evil"),
+                ("repo empty slug", "repo", "ikuaiapp/"),
+                ("tag traversal", "tag", "../v1"),
+                ("asset traversal", "asset_name", "../../evil.tar.gz"),
+            ):
+                mut = copy.deepcopy(base)
+                mut["sources"][0][field] = bad_val
+                cases.append((label, mut))
+
+            for label, bad_mirror in (
+                ("github.io mirror", "https://evil.github.io/"),
+                ("hostless mirror", "https:///"),
+                ("space in mirror", "https://evil.com/a b/"),
+                ("userinfo in mirror", "https://user:pass@evil.com/"),
+            ):
+                mut = copy.deepcopy(base)
+                mut["mirrors"]["raw"] = [bad_mirror]
+                cases.append((label, mut))
+
+            for label, mut in cases:
+                with self.subTest(label=label):
+                    sources_path.write_text(json.dumps(mut), encoding="utf-8")
+                    with self.assertRaises(build_index.BuildIndexError):
+                        build_index.build_index(sources_path=sources_path, output_path=out_path, repo_root=root)
+
+            # Malformed PNG: 24-byte truncated and IHDR length=0
+            sources_path.write_text(json.dumps(base), encoding="utf-8")
+            (root / "icons" / "demo_app.png").write_bytes(
+                b"\x89PNG\r\n\x1a\n" + struct.pack(">I", 13) + b"IHDR" + struct.pack(">II", 16, 16)
+            )
+            with self.assertRaises(build_index.BuildIndexError):
+                build_index.build_index(sources_path=sources_path, output_path=out_path, repo_root=root)
+
+            (root / "icons" / "demo_app.png").write_bytes(
+                b"\x89PNG\r\n\x1a\n" + struct.pack(">I", 0) + b"IHDR" + struct.pack(">IIBBBBB", 16, 16, 8, 6, 0, 0, 0) + b"\x00" * 4
+            )
+            with self.assertRaises(build_index.BuildIndexError):
+                build_index.build_index(sources_path=sources_path, output_path=out_path, repo_root=root)
+
+            # local_source traversal and --sync-icons symlink refusal
+            src_root = root / "sibling"
+            outside_dir = root / "outside_repo"
+            outside_dir.mkdir(parents=True)
+            plugin_dir = src_root / "demo-repo"
+            (plugin_dir / "html").mkdir(parents=True)
+            (plugin_dir / "releases").mkdir(parents=True)
+            (plugin_dir / "html" / "metadata.json").write_text(
+                json.dumps({"name": "demo_app", "alias": "Demo App", "version": "1.2.3"}),
+                encoding="utf-8",
+            )
+            (plugin_dir / "html" / "demo_app.png").write_bytes(_make_png(16, 16))
+            (plugin_dir / "releases" / "demo-1.2.3.tar.gz.sha256").write_text(
+                f"{'a' * 64}  demo-1.2.3.tar.gz\n", encoding="utf-8"
+            )
+
+            trav_dir = copy.deepcopy(base)
+            trav_dir["sources"][0]["local_source"] = {
+                "dir": "../outside_repo",
+                "metadata_relpath": "html/metadata.json",
+                "icon_relpath": "html/demo_app.png",
+                "sha256_relpath": "releases/demo-1.2.3.tar.gz.sha256",
+            }
+            sources_path.write_text(json.dumps(trav_dir), encoding="utf-8")
+            with self.assertRaises(build_index.BuildIndexError):
+                build_index.build_index(
+                    sources_path=sources_path,
+                    output_path=out_path,
+                    source_root=src_root,
+                    sync_icons=True,
+                    repo_root=root,
+                )
+
+            good_src = copy.deepcopy(base)
+            good_src["sources"][0]["local_source"] = {
+                "dir": "demo-repo",
+                "metadata_relpath": "html/metadata.json",
+                "icon_relpath": "html/demo_app.png",
+                "sha256_relpath": "releases/demo-1.2.3.tar.gz.sha256",
+            }
+            sources_path.write_text(json.dumps(good_src), encoding="utf-8")
+            victim = root / "victim.txt"
+            victim.write_text("KEEP", encoding="utf-8")
+            icon_dest = root / "icons" / "demo_app.png"
+            icon_dest.unlink()
+            icon_dest.symlink_to(victim)
+            with self.assertRaises(build_index.BuildIndexError):
+                build_index.build_index(
+                    sources_path=sources_path,
+                    output_path=out_path,
+                    source_root=src_root,
+                    sync_icons=True,
+                    repo_root=root,
+                )
+            self.assertEqual(victim.read_text(encoding="utf-8"), "KEEP")
+
     def test_verify_remote_and_sync_icons_with_source_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

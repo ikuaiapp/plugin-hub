@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import argparse
 import http.client
+import ipaddress
 import json
 import re
 import socket
@@ -58,17 +59,43 @@ class ProbeClient(Protocol):
         ...
 
 
+def _validate_public_ip(ip_str: str, host: str) -> None:
+    addr = ipaddress.ip_address(ip_str)
+    if (
+        addr.is_private
+        or addr.is_loopback
+        or addr.is_link_local
+        or addr.is_multicast
+        or addr.is_reserved
+        or addr.is_unspecified
+        or not addr.is_global
+    ):
+        raise ValueError(f"blocked non-public host {host!r} ({ip_str})")
+
+
 class _IPv4HTTPSConnection(http.client.HTTPSConnection):
     """HTTPSConnection preferring IPv4 (matching curl -4 on dual-stack routers)."""
 
-    def __init__(self, host: str, port: int | None = None, *, timeout: float, context: ssl.SSLContext) -> None:
+    def __init__(
+        self,
+        host: str,
+        port: int | None = None,
+        *,
+        timeout: float,
+        context: ssl.SSLContext,
+        allow_private_hosts: bool = False,
+    ) -> None:
         super().__init__(host, port=port, timeout=timeout, context=context)
         self.negotiated_tls_version: str = ""
+        self.allow_private_hosts = allow_private_hosts
 
     def connect(self) -> None:
         port = self.port or 443
         last_exc: OSError | None = None
         addrinfo = socket.getaddrinfo(self.host, port, socket.AF_INET, socket.SOCK_STREAM)
+        if not self.allow_private_hosts:
+            for _, _, _, _, sockaddr in addrinfo:
+                _validate_public_ip(sockaddr[0], self.host)
         for family, socktype, proto, _, sockaddr in addrinfo:
             raw_sock: socket.socket | None = None
             try:
@@ -94,12 +121,22 @@ class _IPv4HTTPSConnection(http.client.HTTPSConnection):
 class UrllibProbeClient:
     """Stdlib HTTPS probe client bounded to TLS 1.2 (OpenSSL 1.0.2u router parity)."""
 
-    def __init__(self, *, max_redirects: int = 5) -> None:
+    def __init__(
+        self,
+        *,
+        max_redirects: int = 5,
+        allow_private_hosts: bool = False,
+        ssl_context: ssl.SSLContext | None = None,
+    ) -> None:
         self.max_redirects = max_redirects
-        self.ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-        self.ssl_context.load_default_certs()
-        self.ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
-        self.ssl_context.maximum_version = ssl.TLSVersion.TLSv1_2
+        self.allow_private_hosts = allow_private_hosts
+        if ssl_context is not None:
+            self.ssl_context = ssl_context
+        else:
+            self.ssl_context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+            self.ssl_context.load_default_certs()
+            self.ssl_context.minimum_version = ssl.TLSVersion.TLSv1_2
+            self.ssl_context.maximum_version = ssl.TLSVersion.TLSv1_2
 
     def fetch(
         self,
@@ -117,8 +154,20 @@ class UrllibProbeClient:
         started = time.monotonic()
         for _ in range(self.max_redirects + 1):
             parsed = urllib.parse.urlsplit(current_url)
-            if parsed.scheme != "https" or not parsed.hostname:
-                raise ValueError(f"only https:// URLs are supported: {current_url!r}")
+            if (
+                parsed.scheme != "https"
+                or not parsed.hostname
+                or parsed.username is not None
+                or parsed.password is not None
+                or "@" in parsed.netloc
+            ):
+                raise ValueError(f"only https:// URLs without userinfo are supported: {current_url!r}")
+            if not self.allow_private_hosts:
+                try:
+                    _validate_public_ip(parsed.hostname, parsed.hostname)
+                except ValueError as exc:
+                    if "does not appear to be an IPv4 or IPv6 address" not in str(exc):
+                        raise
             path = parsed.path or "/"
             if parsed.query:
                 path = f"{path}?{parsed.query}"
@@ -127,6 +176,7 @@ class UrllibProbeClient:
                 parsed.port,
                 timeout=timeout,
                 context=self.ssl_context,
+                allow_private_hosts=self.allow_private_hosts,
             )
             try:
                 conn.request("GET", path, headers=req_headers)
@@ -309,14 +359,28 @@ def _validate_gzip_magic(body: bytes) -> str:
     return "" if body.startswith(GZIP_MAGIC) else "missing gzip magic header (\\x1f\\x8b\\x08)"
 
 
+def _validate_plugin_entry(plugin: Any, idx: int) -> dict[str, Any]:
+    if not isinstance(plugin, dict):
+        raise ValueError(f"plugin entry [{idx}] must be an object")
+    for req_key in ("name", "icon", "download_url", "sha256", "asset_name"):
+        val = plugin.get(req_key)
+        if not isinstance(val, str) or not val.strip():
+            raise ValueError(f"plugin entry [{idx}] missing or invalid {req_key!r}")
+    return plugin
+
+
 def load_index(index_path: Path) -> dict[str, Any]:
     if not index_path.is_file():
         raise ValueError(f"index file not found: {index_path}")
     data = json.loads(index_path.read_text(encoding="utf-8"))
     if not isinstance(data, dict) or data.get("schema_version") != 1:
         raise ValueError(f"invalid plugin index schema in {index_path}")
+    if not isinstance(data.get("hub_repo"), str) or not data["hub_repo"].strip():
+        raise ValueError(f"missing hub_repo in {index_path}")
     if not isinstance(data.get("mirrors"), dict) or not isinstance(data.get("plugins"), list) or not data["plugins"]:
         raise ValueError(f"missing mirrors or plugins in {index_path}")
+    for idx, plugin in enumerate(data["plugins"]):
+        _validate_plugin_entry(plugin, idx)
     return data
 
 
@@ -327,15 +391,17 @@ def verify_all(
     timeout: float = 8.0,
     probe_relpath: str = "plugins.json",
     check_assets: bool = False,
+    all_plugins: bool = False,
     min_raw: int = 1,
     min_release: int = 1,
 ) -> dict[str, Any]:
-    hub_repo = str(index["hub_repo"])
-    sample_plugin = index["plugins"][0]
-    sample_icon = str(sample_plugin["icon"])
-    sample_url = str(sample_plugin["download_url"])
-    sample_sha256 = str(sample_plugin["sha256"])
-    sample_asset = str(sample_plugin["asset_name"])
+    if not isinstance(index, dict) or not isinstance(index.get("plugins"), list) or not index["plugins"]:
+        raise ValueError("index must include non-empty plugins list")
+    hub_repo = str(index.get("hub_repo", ""))
+    if not hub_repo:
+        raise ValueError("index missing hub_repo")
+    plugins_to_check = index["plugins"] if all_plugins else [index["plugins"][0]]
+    validated_plugins = [_validate_plugin_entry(p, idx) for idx, p in enumerate(plugins_to_check)]
 
     results: list[ProbeResult] = []
 
@@ -356,44 +422,50 @@ def verify_all(
         )
         results.append(res)
 
-    if check_assets:
-        for role, mirror, url in build_raw_targets(index, sample_icon):
+    for plugin in validated_plugins:
+        sample_icon = str(plugin["icon"])
+        sample_url = str(plugin["download_url"])
+        sample_sha256 = str(plugin["sha256"])
+        sample_asset = str(plugin["asset_name"])
+
+        if check_assets:
+            for role, mirror, url in build_raw_targets(index, sample_icon):
+                res = _probe_single(
+                    client,
+                    role=f"{role}_icon",
+                    mirror=mirror,
+                    url=url,
+                    timeout=timeout,
+                    validator=_validate_png,
+                )
+                results.append(res)
+
+        for role, mirror, sidecar_url in build_release_targets(index, f"{sample_url}.sha256"):
             res = _probe_single(
                 client,
-                role=f"{role}_icon",
+                role=role,
                 mirror=mirror,
-                url=url,
+                url=sidecar_url,
                 timeout=timeout,
-                validator=_validate_png,
+                validator=lambda body, s=sample_sha256, a=sample_asset: _validate_sha256_sidecar(body, s, a),
+                max_bytes=4096,
             )
             results.append(res)
 
-    for role, mirror, sidecar_url in build_release_targets(index, f"{sample_url}.sha256"):
-        res = _probe_single(
-            client,
-            role=role,
-            mirror=mirror,
-            url=sidecar_url,
-            timeout=timeout,
-            validator=lambda body, s=sample_sha256, a=sample_asset: _validate_sha256_sidecar(body, s, a),
-            max_bytes=4096,
-        )
-        results.append(res)
-
-    if check_assets:
-        for role, mirror, asset_url in build_release_targets(index, sample_url):
-            res = _probe_single(
-                client,
-                role=f"{role}_range",
-                mirror=mirror,
-                url=asset_url,
-                timeout=timeout,
-                validator=_validate_gzip_magic,
-                headers={"Range": "bytes=0-511"},
-                max_bytes=512,
-                expected_statuses=(200, 206),
-            )
-            results.append(res)
+        if check_assets:
+            for role, mirror, asset_url in build_release_targets(index, sample_url):
+                res = _probe_single(
+                    client,
+                    role=f"{role}_range",
+                    mirror=mirror,
+                    url=asset_url,
+                    timeout=timeout,
+                    validator=_validate_gzip_magic,
+                    headers={"Range": "bytes=0-511"},
+                    max_bytes=512,
+                    expected_statuses=(200, 206),
+                )
+                results.append(res)
 
     raw_ok = sum(1 for r in results if r.role in {"raw", "jsdelivr", "raw_direct", "raw_canonical"} and r.ok)
     release_ok = sum(1 for r in results if r.role in {"release", "release_canonical"} and r.ok)
@@ -409,6 +481,7 @@ def verify_all(
         "passed": passed,
         "probe_relpath": probe_relpath,
         "check_assets": check_assets,
+        "all_plugins": all_plugins,
         "summary": {
             "raw_ok": raw_ok,
             "release_ok": release_ok,
@@ -416,6 +489,7 @@ def verify_all(
             "range_ok": range_ok,
             "min_raw": min_raw,
             "min_release": min_release,
+            "plugins_checked": len(validated_plugins),
             "total_probes": len(results),
         },
         "results": [asdict(r) for r in results],
@@ -498,6 +572,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--timeout", type=float, default=8.0, help="Per-probe HTTP timeout in seconds")
     parser.add_argument("--json", action="store_true", help="Emit JSON report")
     parser.add_argument("--check-assets", action="store_true", help="Also probe PNG icons and tarball Range gzip magic")
+    parser.add_argument("--all-plugins", action="store_true", help="Probe every plugin entry instead of only plugins[0]")
     parser.add_argument("--probe-relpath", default="plugins.json", help="Relative repo path to probe on raw/CDN mirrors")
     parser.add_argument("--min-raw", type=int, default=1, help="Minimum healthy raw/CDN mirrors required")
     parser.add_argument("--min-release", type=int, default=1, help="Minimum healthy release mirrors required")
@@ -527,6 +602,7 @@ def main(argv: list[str] | None = None) -> int:
         timeout=args.timeout,
         probe_relpath=args.probe_relpath,
         check_assets=args.check_assets or args.offline_test,
+        all_plugins=args.all_plugins,
         min_raw=args.min_raw,
         min_release=args.min_release,
     )

@@ -52,6 +52,12 @@ class PublicAuditTests(unittest.TestCase):
         for name in (
             "hosts.yml",
             ".env",
+            ".env.local",
+            ".env.production",
+            ".netrc",
+            "id_rsa",
+            "id_ed25519",
+            "id_ecdsa",
             "server.key",
             "cert.pem",
             "store.p12",
@@ -64,9 +70,11 @@ class PublicAuditTests(unittest.TestCase):
             "config.db-wal",
             "config.db-shm",
             "config.db-journal",
+            "dump.db.bak2",
             "data.bak",
             "data.backup",
             "bundle.tar.gz",
+            "archive.tar.bz2",
             "archive.tgz",
             "archive.tar",
             "archive.zip",
@@ -75,6 +83,8 @@ class PublicAuditTests(unittest.TestCase):
             "pkg.apk",
             "firmware.bin",
             "pgstore.bin.pkg",
+            "payload.enc",
+            "libfoo.so",
             "disk.iso",
             "rootfs.xz",
             "bundle.7z",
@@ -124,6 +134,15 @@ class PublicAuditTests(unittest.TestCase):
             hist_findings = public_audit.scan_history(repo, "HEAD")
             self.assertTrue(any("commit message: test credential or user" in item for item in hist_findings))
             self.assertTrue(any("utf16.dat:" in item for item in hist_findings))
+
+            # Author/committer metadata leak with clean commit message
+            _git(repo, "config", "--local", "user.name", "iks" + "shd")
+            _git(repo, "config", "--local", "user.email", "admin@192." + "168.2.252")
+            (repo / "clean2.txt").write_text("clean\n", encoding="utf-8")
+            _git(repo, "add", "clean2.txt")
+            _git(repo, "commit", "-m", "clean message")
+            meta_findings = public_audit.scan_history(repo, "HEAD")
+            self.assertTrue(any("192.168 IP" in item for item in meta_findings))
 
     def test_icons_and_docs_pass_audit(self) -> None:
         for png in sorted((ROOT / "icons").glob("*.png")):
