@@ -61,7 +61,7 @@ jobs:
           fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add VERSION catalog_sources.json SOURCES.json plugins.json icons/
+          git add VERSION catalog_sources.json SOURCES.json plugins.json README.md icons/
           git commit -m "chore(hub): auto-sync ikuaiapp plugin catalog"
           python3 -B scripts/public_audit.py --history HEAD
           git push origin HEAD:main

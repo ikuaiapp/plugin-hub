@@ -495,6 +495,73 @@ def _update_sources_manifest(
     build_index._atomic_write_text(manifest_path, json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
 
 
+def _escape_md_cell(text: Any) -> str:
+    return " ".join(str(text).split()).replace("|", "\\|")
+
+
+def _format_human_size(size: int) -> str:
+    if size >= 1024 * 1024:
+        return f"`{size:,} B` (~{size / (1024 * 1024):.1f} MiB)"
+    if size >= 1024:
+        return f"`{size:,} B` (~{round(size / 1024)} KiB)"
+    return f"`{size:,} B`"
+
+
+def _update_readme_table(
+    readme_path: Path,
+    *,
+    catalog_sources: dict[str, Any],
+    release_tag: str,
+) -> None:
+    if not readme_path.is_file() or readme_path.is_symlink():
+        return
+    original = readme_path.read_text(encoding="utf-8")
+    public_entries = [e for e in catalog_sources["sources"] if e.get("visibility") == "public"]
+    count = len(public_entries)
+
+    lines = [
+        f"- **已收录的插件（全部 {count} 款 `ikuaiapp` 插件，统一托管于 `ikuaiapp/plugin-hub` Release `{release_tag}`）**：",
+        "",
+        "| 插件内部名 (`name`) | 显示名称 (`alias`) | 上游源码仓库 (`repo`) | 源码可见性 | 当前版本 / Tag | 兼容固件 | 安装包大小 | 说明 |",
+        "|---|---|---|---|---|---|---|---|",
+    ]
+    for entry in public_entries:
+        src_vis = entry.get("source_visibility", "public")
+        vis_cell = "`PUBLIC`" if src_vis == "public" else "`PRIVATE`（Release 同步收录）"
+        compat_cell = ", ".join(f"`{_escape_md_cell(c)}`" for c in entry.get("compat", []))
+        lines.append(
+            "| "
+            + " | ".join(
+                [
+                    f"`{_escape_md_cell(entry['name'])}`",
+                    _escape_md_cell(entry.get("alias", entry["name"])),
+                    f"`{_escape_md_cell(entry['repo'])}`",
+                    vis_cell,
+                    f"`{_escape_md_cell(entry['version'])}` / `{_escape_md_cell(entry['tag'])}`",
+                    compat_cell,
+                    _format_human_size(int(entry["size"])),
+                    _escape_md_cell(entry.get("description", "")),
+                ]
+            )
+            + " |"
+        )
+    replacement_block = "\n".join(lines) + "\n"
+
+    table_re = re.compile(
+        r"- \*\*已收录的插件（全部 \d+ 款 `ikuaiapp` 插件，统一托管于 `ikuaiapp/plugin-hub` Release `[^`]+`）\*\*：\n\n"
+        r"\| 插件内部名 \(`name`\) \|[^\n]*\n"
+        r"\|[-|]+\|\n"
+        r"(?:\|[^\n]*\n)+"
+    )
+    updated, subs = table_re.subn(lambda _m: replacement_block, original, count=1)
+    if subs == 0:
+        return
+    updated = re.sub(r"全部 \d+ 款插件", f"全部 {count} 款插件", updated)
+    updated = re.sub(r"全部 \d+ 条", f"全部 {count} 条", updated)
+    if updated != original:
+        build_index._atomic_write_text(readme_path, updated)
+
+
 def sync_hub(
     *,
     repo_root: Path = REPO_ROOT,
@@ -710,6 +777,11 @@ def sync_hub(
                 sources_path=sources_path,
                 output_path=output_path,
                 repo_root=repo_root,
+            )
+            _update_readme_table(
+                repo_root / "README.md",
+                catalog_sources=catalog,
+                release_tag=release_tag,
             )
 
     return {

@@ -65,7 +65,7 @@ def _make_plugin_tarball(
 
 class SyncHubTests(unittest.TestCase):
     def _setup_hub_copy(self, dest: Path) -> None:
-        for fname in ("VERSION", "catalog_sources.json", "SOURCES.json", "plugins.json", ".gitignore"):
+        for fname in ("VERSION", "catalog_sources.json", "SOURCES.json", "plugins.json", "README.md", ".gitignore"):
             shutil.copy2(ROOT / fname, dest / fname)
         shutil.copytree(ROOT / "icons", dest / "icons")
 
@@ -166,6 +166,11 @@ class SyncHubTests(unittest.TestCase):
                 f"https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/{nd_asset}",
             )
             self.assertEqual(new_entry["compat"], ["3.7.26"])
+            readme_text = (hub / "README.md").read_text(encoding="utf-8")
+            self.assertIn("全部 10 款 `ikuaiapp` 插件", readme_text)
+            self.assertIn("全部 10 款插件", readme_text)
+            self.assertIn("`new_demo` | 示例新插件 | `ikuaiapp/new-demo` | `PRIVATE`（Release 同步收录） | `1.0.0` / `v1.0.0`", readme_text)
+            self.assertIn("`router_backup` | 路由远程备份 | `ikuaiapp/config-backup` | `PRIVATE`（Release 同步收录） | `3.8` / `v3.8`", readme_text)
             build_index.build_index(
                 sources_path=hub / "catalog_sources.json",
                 output_path=hub / "plugins.json",
