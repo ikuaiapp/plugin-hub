@@ -97,7 +97,24 @@ python3 -B scripts/public_audit.py --history HEAD
 
 ---
 
-## 5. 仓库文档导航
+## 5. 云端自动定时抓取与更新（GitHub Actions）
+
+本仓库已配置云端自动巡检工作流 [`.github/workflows/sync-hub.yml`](.github/workflows/sync-hub.yml) 与同步脚本 [`scripts/sync_hub.py`](scripts/sync_hub.py)：
+
+- **触发方式**：
+  - 每 6 小时自动定时巡检（`cron: "0 */6 * * *"`）；
+  - 支持在 GitHub Actions 页面点击 **`Run workflow`**（`workflow_dispatch`）手动触发，或通过 `repository_dispatch` (`plugin-release`) 立即触发。
+- **自动闭环流程**：
+  1. 扫描 `ikuaiapp` 名下所有未归档仓库（支持公开与私有插件仓库，自动跳过 `plugin-hub`、`plugin-store`、`reinstall`、`ikuai-plus` 及无 Release 的仓库）；
+  2. 检查每个插件仓库最新 Release 的 `.tar.gz`（比对 `tag` / `asset_name` / `.sha256` 避免重复下载）；
+  3. 发现新插件或新版本后自动安全解包：校验证书/路径穿越/符号链接安全、提取 `html/metadata.json` 与 `<name>.png` 图标、并执行 `public_audit.py` 脱敏扫描；
+  4. 自动上传 `.tar.gz` 与 `.sha256` 到 `ikuaiapp/plugin-hub` Release `v1.0.0`，更新 `VERSION`、`catalog_sources.json`、`SOURCES.json`、`icons/` 与 `plugins.json`，跑通全部校验与单元测试后自动提交推送至 `main` 并实测国内加速镜像。
+- **Token 配置说明**：
+  - 如需自动拉取您新建的**私有**插件仓库，需在 `ikuaiapp/plugin-hub` 仓库 `Settings -> Secrets and variables -> Actions` 中配置具备 `repo` 权限的 `HUB_SYNC_TOKEN` Secret（未配置时回退为 `GITHUB_TOKEN`，仅可扫描公开仓库）。
+
+---
+
+## 6. 仓库文档导航
 
 - [`AGENTS.md`](AGENTS.md) — 面向 AI Agent 的架构规范、平台约束、测试与脱敏发布门禁（英文）
 - [`MAINTAINERS.md`](MAINTAINERS.md) — 维护者构建、探测、升级与发版检查单（中文）

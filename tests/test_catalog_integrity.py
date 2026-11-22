@@ -55,7 +55,12 @@ class CatalogIntegrityTests(unittest.TestCase):
                 self.assertNotIn("github.io", url)
 
         plugins = doc["plugins"]
-        self.assertEqual([p["name"] for p in plugins], EXPECTED_PUBLIC_NAMES)
+        catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
+        expected_public_from_sources = [
+            s["name"] for s in catalog_sources["sources"] if s.get("visibility") == "public"
+        ]
+        self.assertEqual([p["name"] for p in plugins], expected_public_from_sources)
+        self.assertTrue(set(EXPECTED_PUBLIC_NAMES).issubset(expected_public_from_sources))
 
         required_keys = {
             "name",
@@ -92,8 +97,12 @@ class CatalogIntegrityTests(unittest.TestCase):
             self.assertIsInstance(plugin["only_offline_install"], bool)
 
     def test_icons_directory_contains_only_valid_public_regular_pngs(self) -> None:
+        catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
+        public_names = [
+            s["name"] for s in catalog_sources["sources"] if s.get("visibility") == "public"
+        ]
         icon_files = sorted(p.name for p in (ROOT / "icons").iterdir())
-        expected_files = sorted(f"{name}.png" for name in EXPECTED_PUBLIC_NAMES)
+        expected_files = sorted(f"{name}.png" for name in public_names)
         self.assertEqual(icon_files, expected_files)
         for fname in expected_files:
             path = ROOT / "icons" / fname
@@ -111,31 +120,35 @@ class CatalogIntegrityTests(unittest.TestCase):
         self.assertNotIn("github.io", gh_meta["homepage"])
         self.assertLessEqual(len(gh_meta["topics"]), 20)
 
+        catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
+        expected_public_from_sources = [
+            s["name"] for s in catalog_sources["sources"] if s.get("visibility") == "public"
+        ]
+        expected_private_from_sources = [
+            s["name"] for s in catalog_sources["sources"] if s.get("visibility") == "private_pending"
+        ]
+
         sources_doc = json.loads((ROOT / "SOURCES.json").read_text(encoding="utf-8"))
         self.assertEqual(sources_doc["target"]["catalog_version"], version)
         self.assertEqual(sources_doc["target"]["hosting_branch"], "main")
-        self.assertEqual(list(sources_doc["upstream"]["plugins"].keys()), EXPECTED_PUBLIC_NAMES)
-        self.assertEqual(sources_doc["upstream"]["pending_private_repos"], [])
+        self.assertEqual(list(sources_doc["upstream"]["plugins"].keys()), expected_public_from_sources)
+        self.assertEqual(
+            sources_doc["upstream"]["pending_private_repos"],
+            [s["repo"] for s in catalog_sources["sources"] if s.get("visibility") == "private_pending"],
+        )
         for pname, expected_repo in EXPECTED_PRIVATE_SOURCE_REPOS.items():
             self.assertEqual(sources_doc["upstream"]["plugins"][pname]["repo"], expected_repo)
             self.assertEqual(sources_doc["upstream"]["plugins"][pname]["source_visibility"], "private")
 
-        catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
-        self.assertEqual(
-            [s["name"] for s in catalog_sources["sources"] if s["visibility"] == "public"],
-            EXPECTED_PUBLIC_NAMES,
-        )
-        self.assertEqual(
-            [s["name"] for s in catalog_sources["sources"] if s["visibility"] == "private_pending"],
-            EXPECTED_PRIVATE_NAMES,
-        )
+        self.assertTrue(set(EXPECTED_PUBLIC_NAMES).issubset(expected_public_from_sources))
+        self.assertEqual(expected_private_from_sources, EXPECTED_PRIVATE_NAMES)
 
     def test_jq_parses_plugins_json_when_available(self) -> None:
         jq_bin = shutil.which("jq")
         if jq_bin is None:
             self.skipTest("jq not installed on host")
         proc = subprocess.run(
-            [jq_bin, "-e", ".schema_version == 1 and (.plugins | length) == 9", str(ROOT / "plugins.json")],
+            [jq_bin, "-e", ".schema_version == 1 and (.plugins | length) >= 9", str(ROOT / "plugins.json")],
             capture_output=True,
             text=True,
         )
@@ -146,7 +159,9 @@ class CatalogIntegrityTests(unittest.TestCase):
             self.skipTest("sibling ../3.7.26 workspace not present")
         catalog_sources = json.loads((ROOT / "catalog_sources.json").read_text(encoding="utf-8"))
         for entry in catalog_sources["sources"]:
-            local = entry["local_source"]
+            local = entry.get("local_source")
+            if not isinstance(local, dict):
+                continue
             repo_dir = SIBLING_3726 / local["dir"]
             self.assertTrue(repo_dir.is_dir(), f"missing sibling repo {repo_dir}")
 

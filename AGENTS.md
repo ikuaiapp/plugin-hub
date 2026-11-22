@@ -35,9 +35,11 @@ All autonomous and cooperating AI agents working in this repository MUST follow 
 - `icons/<name>.png`: Regular-file PNG icons (`<= 1 MiB`, valid `IHDR`, **zero symlinks**) extracted from each indexed plugin's `<name>.png` (never `logo.png`, because `MeshCentral` lacks `logo.png` and `vnt2/html/logo.png` is a symlink).
 - `scripts/`:
   - `build_index.py`: Deterministic catalog builder/validator (`--sources`, `--output`, `--source-root`, `--generated-at`, `SOURCE_DATE_EPOCH`, `--check`, `--sync-icons`, `--verify-remote`), supporting `release_repo`/`release_tag` overrides, generating per-plugin `mirror_urls`, refusing symlinked `icons/` directories/files, sanitizing invisible Unicode characters (`\ufeff\u200b\u200c\u200d`), and normalizing `onlyOfflineInstall` to boolean `only_offline_install`.
+  - `sync_hub.py`: Automated org-wide release discovery, tarball path-safety & `public_audit` verification, `icons/` & `catalog_sources.json`/`SOURCES.json`/`plugins.json` updater, and `plugin-hub` Release `v1.0.0` uploader (`--dry-run`, `--upload-release`, `--bump-version`, `--offline-dir`).
   - `verify_mirrors.py`: Mirror probe tool enforcing TLS 1.2 bounds (`ssl.TLSVersion.TLSv1_2`), IPv4 connection preference, HTTP `200` HTML-portal rejection, JSON/PNG/`.sha256`/Range-gzip checks, `--all-plugins`, and `--offline-test` / injectable `ProbeClient`.
   - `public_audit.py`: Mandatory desensitization scanner (`--working-tree` and `--history <REVISION>`).
-- `tests/`: Pure Python stdlib `unittest` suite (`test_build_index.py`, `test_verify_mirrors.py`, `test_catalog_integrity.py`, `test_public_audit.py`) runnable offline with zero network calls.
+- `.github/workflows/sync-hub.yml`: Scheduled (`0 */6 * * *`) + `workflow_dispatch` / `repository_dispatch` cloud workflow running `scripts/sync_hub.py` using `secrets.HUB_SYNC_TOKEN || github.token`.
+- `tests/`: Pure Python stdlib `unittest` suite (`test_build_index.py`, `test_sync_hub.py`, `test_verify_mirrors.py`, `test_catalog_integrity.py`, `test_public_audit.py`) runnable offline with zero network calls.
 
 ---
 
