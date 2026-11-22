@@ -54,7 +54,7 @@
         "sha256_relpath": "releases/config-backup-3.7-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },
@@ -86,7 +86,7 @@
         "sha256_relpath": "releases/fn-knock-2.5.11-ikuai-3.7.x-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },
@@ -118,7 +118,7 @@
         "sha256_relpath": "releases/docker-28.5.2-ikuai-3.7-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },
@@ -150,7 +150,7 @@
         "sha256_relpath": "releases/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },
@@ -182,7 +182,7 @@
         "sha256_relpath": "releases/vnt2-ikuai-3.7.26_x86_64.tar.gz.sha256",
         "manifest_relpath": "releases/BUILD-MANIFEST.json"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },
@@ -213,7 +213,7 @@
         "icon_relpath": "payload/html/vnstat.png",
         "sha256_relpath": "releases/vnstat-3.7.26-ikuai-3.7.26-x64.tar.gz.sha256"
       },
-      "source_visibility": "public",
+      "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
     },

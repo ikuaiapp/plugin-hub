@@ -12,15 +12,15 @@
 
 | 插件内部名 (`name`) | 显示名称 (`alias`) | 上游源码仓库 (`repo`) | 源码可见性 | 当前版本 / Tag | 兼容固件 | 安装包大小 | 说明 |
 |---|---|---|---|---|---|---|---|
-| `router_backup` | 路由远程备份 | `ikuaiapp/config-backup` | `PUBLIC` | `3.7` / `v3.7` | `3.7.x` | `47,239 B` (~46 KiB) | 定时原生配置备份与 FTP/FTPS 远程管理 |
-| `fn-knock` | fn-knock | `ikuaiapp/knock` | `PUBLIC` | `2.5.11` / `v2.5.11` | `3.7.x` | `32,157,989 B` (~30.7 MiB) | 端口敲门与远程安全管理 |
-| `docker` | Docker容器 | `ikuaiapp/docker` | `PUBLIC` | `28.5.2` / `v28.5.2` | `3.7.x` | `100,046,010 B` (~95.4 MiB) | 原生 Docker 28.5.2 与 Compose 2.39.2 |
-| `MeshCentral` | MeshCentral 远程管理 | `ikuaiapp/MeshCentral` | `PUBLIC` | `3.7.26` / `v3.7.26` | `3.7.26` | `125,786,787 B` (~120.0 MiB) | 路由器本机运行 MeshCentral 1.3.1 + Node 24 |
-| `vnt2` | VNT 套件 | `ikuaiapp/vnt` | `PUBLIC` | `3.7.26` / `v3.7.26` | `3.7.26` | `11,940,298 B` (~11.4 MiB) | VNT 2.0.11 客户端与 VNTS 2.0.9 服务端 |
-| `vnstat` | vnStat 流量统计 | `ikuaiapp/vnstat` | `PUBLIC` | `3.7.26` / `v3.7.26` | `3.7.26+` | `1,395,719 B` (~1.3 MiB) | WAN 出口与多接口独立账期流量统计 |
-| `system-tools` | 系统工具 | `ikuaiapp/system-tools` | `PRIVATE`（Release 同步收录） | `1.1.9` / `v1.1.9` | `3.7.x` | `284,169 B` (~278 KiB) | 系统安全加固、官方外联屏蔽、体验企业版切换与路由 ID 管理 |
-| `ikev2-cert` | IKEv2证书申请 | `ikuaiapp/ikev2-acme` | `PRIVATE`（Release 同步收录） | `3.1.7` / `v3.1.7` | `3.7.x` | `113,141 B` (~110 KiB) | 腾讯云 DNSPod / Cloudflare DNS 验证 IKEv2 证书申请与续期 |
-| `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `930,568 B` (~909 KiB) | 基于路由器会话鉴权与 Unix Socket 隔离的 Web TTY 终端 |
+| `router_backup` | 路由远程备份 | `ikuaiapp/config-backup` | `PRIVATE`（Release 同步收录） | `3.7` / `v3.7` | `3.7.x` | `47,239 B` (~46 KiB) | 自定义时间备份爱快路由原生配置，支持本地与当前设备远端 FTP/FTPS 管理及校验恢复 |
+| `fn-knock` | fn-knock | `ikuaiapp/knock` | `PRIVATE`（Release 同步收录） | `2.5.11` / `v2.5.11` | `3.7.x` | `32,157,989 B` (~30.7 MiB) | fn-knock 管理、每日备份与完整恢复 |
+| `docker` | Docker容器 | `ikuaiapp/docker` | `PRIVATE`（Release 同步收录） | `28.5.2` / `v28.5.2` | `3.7.x` | `100,046,010 B` (~95.4 MiB) | 通过Docker功能，用户可以打包应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。 |
+| `MeshCentral` | MeshCentral 远程管理 | `ikuaiapp/MeshCentral` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26` | `125,786,787 B` (~120.0 MiB) | 在爱快路由器本机运行 MeshCentral 1.3.1 远程管理平台（适配 iKuai 3.7.26 x64） |
+| `vnt2` | VNT 套件 | `ikuaiapp/vnt` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26` | `11,940,298 B` (~11.4 MiB) | VNT 2.x 客户端与 VNTS 服务端爱快一体化管理套件。 |
+| `vnstat` | vnStat 流量统计 | `ikuaiapp/vnstat` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26+` | `1,395,719 B` (~1.3 MiB) | WAN出口与每接口独立账期流量统计（内置 vnStat 2.14） |
+| `system-tools` | 系统工具 | `ikuaiapp/system-tools` | `PRIVATE`（Release 同步收录） | `1.1.9` / `v1.1.9` | `3.7.x` | `284,169 B` (~278 KiB) | 爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件 |
+| `ikev2-cert` | IKEv2证书申请 | `ikuaiapp/ikev2-acme` | `PRIVATE`（Release 同步收录） | `3.1.7` / `v3.1.7` | `3.7.x` | `113,141 B` (~110 KiB) | 腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7） |
+| `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `930,568 B` (~909 KiB) | Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。 |
 
 > **大体积插件提示**：`docker`（~95.4 MiB）与 `MeshCentral`（~120.0 MiB）超过原厂 iKuai `3.7.26` 的 50 MiB 默认上传限制，需配合 `plugin-store` 提供的 `128 MiB` 上传放行守护、在线安装链路或 `safe_import.sh` 使用，并确保 `/etc/log` 与 `/tmp` 拥有充足可用空间。
 
