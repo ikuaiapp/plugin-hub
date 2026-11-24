@@ -312,6 +312,31 @@
       "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
+    },
+    {
+      "name": "socks5",
+      "alias": "SK5分流",
+      "repo": "ikuaiapp/socks5",
+      "visibility": "public",
+      "tag": "v0.01",
+      "version": "0.01",
+      "arch": [
+        "x86_64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。",
+      "manufacturer": "iKuai",
+      "releasenotes": "",
+      "only_offline_install": false,
+      "asset_name": "socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "2a73bc6a22d510a10dbf67fc34f5c609e1629dacd31359ec08f821bef8f78986",
+      "size": 25348542,
+      "icon": "icons/socks5.png",
+      "source_visibility": "private",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     }
   ]
 }

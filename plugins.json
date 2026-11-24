@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-22T08:34:56Z",
+  "generated_at": "2026-11-24T02:52:43Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -295,6 +295,36 @@
       "icon": "icons/Ttyd.png",
       "manufacturer": "iKuai",
       "releasenotes": "升级上游 ttyd 至 1.7.7，配置与运行日志迁移至 /etc/log 并支持有界轮转，全面兼容 iKuai 3.7.x x64。",
+      "only_offline_install": false
+    },
+    {
+      "name": "socks5",
+      "alias": "SK5分流",
+      "repo": "ikuaiapp/socks5",
+      "tag": "v0.01",
+      "version": "0.01",
+      "arch": [
+        "x86_64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。",
+      "asset_name": "socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz"
+      ],
+      "sha256": "2a73bc6a22d510a10dbf67fc34f5c609e1629dacd31359ec08f821bef8f78986",
+      "size": 25348542,
+      "icon": "icons/socks5.png",
+      "manufacturer": "iKuai",
+      "releasenotes": "",
       "only_offline_install": false
     }
   ]

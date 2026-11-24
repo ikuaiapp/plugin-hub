@@ -8,7 +8,7 @@
 
 本仓库**仅收录 `ikuaiapp` 名下已公开发布且可直接通过在线市场安装运行的插件**，严格避免与其它构建目录或非插件仓库重复收录：
 
-- **已收录的插件（全部 9 款 `ikuaiapp` 插件，统一托管于 `ikuaiapp/plugin-hub` Release `v1.0.0`）**：
+- **已收录的插件（全部 10 款 `ikuaiapp` 插件，统一托管于 `ikuaiapp/plugin-hub` Release `v1.0.0`）**：
 
 | 插件内部名 (`name`) | 显示名称 (`alias`) | 上游源码仓库 (`repo`) | 源码可见性 | 当前版本 / Tag | 兼容固件 | 安装包大小 | 说明 |
 |---|---|---|---|---|---|---|---|
@@ -21,11 +21,12 @@
 | `system-tools` | 系统工具 | `ikuaiapp/system-tools` | `PRIVATE`（Release 同步收录） | `1.1.9` / `v1.1.9` | `3.7.x` | `284,169 B` (~278 KiB) | 爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件 |
 | `ikev2-cert` | IKEv2证书申请 | `ikuaiapp/ikev2-acme` | `PRIVATE`（Release 同步收录） | `3.1.7` / `v3.1.7` | `3.7.x` | `113,141 B` (~110 KiB) | 腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7） |
 | `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `930,568 B` (~909 KiB) | Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。 |
+| `socks5` | SK5分流 | `ikuaiapp/socks5` | `PRIVATE`（Release 同步收录） | `0.01` / `v0.01` | `3.7.x` | `25,348,542 B` (~24.2 MiB) | 批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。 |
 
 > **大体积插件提示**：`docker`（~95.4 MiB）与 `MeshCentral`（~120.0 MiB）超过原厂 iKuai `3.7.26` 的 50 MiB 默认上传限制，需配合 `plugin-store` 提供的 `128 MiB` 上传放行守护、在线安装链路或 `safe_import.sh` 使用，并确保 `/etc/log` 与 `/tmp` 拥有充足可用空间。
 
 - **统一公开分发与明确排除项**：
-  - 全部 9 款插件的 `.tar.gz` 与 `.tar.gz.sha256` 均经脱敏及 `safe_import.sh --check` 审计后统一托管于公开仓库 **`ikuaiapp/plugin-hub` Release `v1.0.0`**（不提交大体积压缩包到 Git 历史）；`plugins.json` 中全部 9 条 `download_url` 与 `mirror_urls` 均指向 `https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/...`，即使上游源码仓库全部保持或后续切换为 `PRIVATE`，路由器及中国大陆加速镜像仍可正常下载安装。
+  - 全部 10 款插件的 `.tar.gz` 与 `.tar.gz.sha256` 均经脱敏及 `safe_import.sh --check` 审计后统一托管于公开仓库 **`ikuaiapp/plugin-hub` Release `v1.0.0`**（不提交大体积压缩包到 Git 历史）；`plugins.json` 中全部 10 条 `download_url` 与 `mirror_urls` 均指向 `https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/...`，即使上游源码仓库全部保持或后续切换为 `PRIVATE`，路由器及中国大陆加速镜像仍可正常下载安装。
   - 明确排除非插件仓库：`ikuaiapp/reinstall`、`ikuaiapp/ikuai-plus`（VPS 刷机/重装镜像工具），以及早期无 Release 的历史归档与本地未发布构建中间产物。详细信息见 [`pending_private_plugins.md`](pending_private_plugins.md)。
 
 ---
@@ -36,7 +37,7 @@
 - **多通道镜像回退顺序**（由 `plugins.json` 中的 `mirrors` 字段下发）：
   1. **索引 JSON (`plugins.json`)**：优先遍历 `mirrors.raw` 前缀代理（`gh-proxy.org`、`ghfast.top`、`gh-proxy.com`、`wget.la`，保证实时更新无 CDN 延迟）→ `mirrors.jsdelivr`（`cdn.jsdelivr.net` / `fastly.jsdelivr.net` / `gcore.jsdelivr.net`）→ `mirrors.raw_direct`（`raw.bgithub.xyz`）→ 官方 `raw.githubusercontent.com`。
   2. **图标资源 (`icons/<name>.png`)**：优先 `mirrors.jsdelivr` → `mirrors.raw` → `mirrors.raw_direct` → 官方 `raw.githubusercontent.com`。
-  3. **Release 压缩包 (`.tar.gz`)**：全部 9 款插件统一托管于 `ikuaiapp/plugin-hub` Release `v1.0.0`，依次遍历 `mirrors.release` 前缀代理（`gh-proxy.org`、`ghfast.top`、`gh-proxy.com`、`cdn.gh-proxy.com`、`edgeone.gh-proxy.com`、`wget.la`，对应每个插件的 `mirror_urls`）→ 官方 `github.com` 直连。
+  3. **Release 压缩包 (`.tar.gz`)**：全部 10 款插件统一托管于 `ikuaiapp/plugin-hub` Release `v1.0.0`，依次遍历 `mirrors.release` 前缀代理（`gh-proxy.org`、`ghfast.top`、`gh-proxy.com`、`cdn.gh-proxy.com`、`edgeone.gh-proxy.com`、`wget.la`，对应每个插件的 `mirror_urls`）→ 官方 `github.com` 直连。
 - **强制完整性校验**：下载的索引 JSON 必须通过结构化解析并拒绝代理返回的 HTTP `200` HTML 门户页；下载的 `.tar.gz` 压缩包必须严格匹配 `plugins.json` 中的 `sha256` 摘要并经 `safe_import.sh` 安全检查后方可安装。
 
 ---
