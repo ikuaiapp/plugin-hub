@@ -400,15 +400,18 @@ class VerifyMirrorsTests(unittest.TestCase):
         doc = json.loads(proc.stdout)
         self.assertTrue(doc["passed"])
         self.assertTrue(doc["all_plugins"])
-        self.assertEqual(doc["summary"]["plugins_checked"], 9)
+        real_count = len(json.loads((ROOT / "plugins.json").read_text(encoding="utf-8"))["plugins"])
+        self.assertGreaterEqual(real_count, 9)
+        self.assertEqual(doc["summary"]["plugins_checked"], real_count)
         self.assertIn(plugin["asset_name"][:12], "system-tools")
 
     def test_all_plugins_fails_when_single_plugin_fails_sha256_icon_or_range(self) -> None:
         import copy
 
         real_index = json.loads((ROOT / "plugins.json").read_text(encoding="utf-8"))
+        real_count = len(real_index["plugins"])
         mut_index = copy.deepcopy(real_index)
-        mut_index["plugins"][8]["sha256"] = "0" * 64
+        mut_index["plugins"][-1]["sha256"] = "0" * 64
         rep_mut = verify_mirrors.verify_all(
             mut_index,
             client=verify_mirrors._OfflineMockProbeClient(real_index),
@@ -417,7 +420,7 @@ class VerifyMirrorsTests(unittest.TestCase):
         )
         self.assertFalse(rep_mut["passed"])
         self.assertFalse(rep_mut["summary"]["per_plugin_ok"])
-        self.assertEqual(rep_mut["summary"]["plugins_checked"], 9)
+        self.assertEqual(rep_mut["summary"]["plugins_checked"], real_count)
         self.assertGreaterEqual(rep_mut["summary"]["release_ok"], 1)
 
         idx = _sample_index()

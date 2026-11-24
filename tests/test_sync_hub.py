@@ -144,6 +144,11 @@ class SyncHubTests(unittest.TestCase):
                 encoding="utf-8",
             )
 
+            initial_ver = (hub / "VERSION").read_text(encoding="utf-8").strip()
+            expected_ver = sync_hub._bump_patch_version(initial_ver)
+            initial_count = len(json.loads((hub / "plugins.json").read_text(encoding="utf-8"))["plugins"])
+            expected_count = initial_count + 1
+
             summary = sync_hub.sync_hub(
                 repo_root=hub,
                 upload_release=True,
@@ -154,12 +159,12 @@ class SyncHubTests(unittest.TestCase):
             self.assertEqual([x["name"] for x in summary["added"]], ["new_demo"])
             self.assertEqual([x["name"] for x in summary["updated"]], ["router_backup"])
 
-            self.assertEqual((hub / "VERSION").read_text(encoding="utf-8").strip(), "1.0.1")
+            self.assertEqual((hub / "VERSION").read_text(encoding="utf-8").strip(), expected_ver)
             self.assertTrue((hub / "icons" / "new_demo.png").is_file())
             doc = json.loads((hub / "plugins.json").read_text(encoding="utf-8"))
             names = [p["name"] for p in doc["plugins"]]
             self.assertIn("new_demo", names)
-            self.assertEqual(len(names), 10)
+            self.assertEqual(len(names), expected_count)
             new_entry = next(p for p in doc["plugins"] if p["name"] == "new_demo")
             self.assertEqual(
                 new_entry["download_url"],
@@ -167,8 +172,8 @@ class SyncHubTests(unittest.TestCase):
             )
             self.assertEqual(new_entry["compat"], ["3.7.26"])
             readme_text = (hub / "README.md").read_text(encoding="utf-8")
-            self.assertIn("全部 10 款 `ikuaiapp` 插件", readme_text)
-            self.assertIn("全部 10 款插件", readme_text)
+            self.assertIn(f"全部 {expected_count} 款 `ikuaiapp` 插件", readme_text)
+            self.assertIn(f"全部 {expected_count} 款插件", readme_text)
             self.assertIn("`new_demo` | 示例新插件 | `ikuaiapp/new-demo` | `PRIVATE`（Release 同步收录） | `1.0.0` / `v1.0.0`", readme_text)
             self.assertIn("`router_backup` | 路由远程备份 | `ikuaiapp/config-backup` | `PRIVATE`（Release 同步收录） | `3.8` / `v3.8`", readme_text)
             build_index.build_index(
@@ -186,7 +191,7 @@ class SyncHubTests(unittest.TestCase):
                 offline_dir=offline,
             )
             self.assertFalse(second["changed"])
-            self.assertEqual((hub / "VERSION").read_text(encoding="utf-8").strip(), "1.0.1")
+            self.assertEqual((hub / "VERSION").read_text(encoding="utf-8").strip(), expected_ver)
 
     def test_rejects_sensitive_or_traversal_tarballs(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
