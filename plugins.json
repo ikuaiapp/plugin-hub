@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-24T17:49:10Z",
+  "generated_at": "2026-11-24T17:52:26Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -151,8 +151,8 @@
       "name": "vnt2",
       "alias": "VNT 套件",
       "repo": "ikuaiapp/vnt",
-      "tag": "v3.7.26",
-      "version": "3.7.26",
+      "tag": "v3.7.26.1",
+      "version": "3.7.26.1",
       "arch": [
         "x64"
       ],
@@ -160,21 +160,21 @@
         "3.7.26"
       ],
       "description": "VNT 2.x 客户端与 VNTS 服务端爱快一体化管理套件。",
-      "asset_name": "vnt2-ikuai-3.7.26_x86_64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
+      "asset_name": "vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
       "mirror_urls": [
-        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz"
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz"
       ],
-      "sha256": "8d445017c3c22504187e4b753e4c08b97c8b7db79a49e419597e8c51a63a5e7f",
-      "size": 11940298,
+      "sha256": "9aa80d0ab60be3ea43773e0c32f429ca23e76cae9c2ca3dd5b7807487df27647",
+      "size": 11942180,
       "icon": "icons/vnt2.png",
       "manufacturer": "ikuaiapp",
-      "releasenotes": "版本对齐 iKuai 3.7.26；内置 VNT 2.0.11 / VNTS 2.0.9；数据与日志迁移至 /etc/log/vnt2 并限制日志轮转上限。",
+      "releasenotes": "适配爱快账号设置分插件 RBAC 权限管控（可查看 r / 可修改 x / 未勾选不可访问），支持只读模式界面与敏感端点隔离。",
       "only_offline_install": false
     },
     {

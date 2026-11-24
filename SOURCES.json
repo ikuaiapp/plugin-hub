@@ -1,7 +1,7 @@
 {
   "target": {
     "catalog_schema_version": 1,
-    "catalog_version": "1.0.2",
+    "catalog_version": "1.0.3",
     "compat_ikuai": "3.7.x",
     "architecture": "x86_64",
     "hosting_branch": "main",
@@ -70,12 +70,12 @@
         "source_visibility": "private",
         "release_repo": "ikuaiapp/plugin-hub",
         "release_tag": "v1.0.0",
-        "tag": "v3.7.26",
-        "version": "3.7.26",
-        "asset_name": "vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26_x86_64.tar.gz",
-        "sha256": "8d445017c3c22504187e4b753e4c08b97c8b7db79a49e419597e8c51a63a5e7f",
-        "size": 11940298,
+        "tag": "v3.7.26.1",
+        "version": "3.7.26.1",
+        "asset_name": "vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/vnt2-ikuai-3.7.26.1_x86_64.tar.gz",
+        "sha256": "9aa80d0ab60be3ea43773e0c32f429ca23e76cae9c2ca3dd5b7807487df27647",
+        "size": 11942180,
         "icon_source_relpath": "vnt2/html/vnt2.png",
         "icon_sha256": "25946dbb92b7dba836681c376ff47ffe58f7efbe7cfa00cc3b92f13575fdd82c"
       },
