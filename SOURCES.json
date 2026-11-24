@@ -1,7 +1,7 @@
 {
   "target": {
     "catalog_schema_version": 1,
-    "catalog_version": "1.0.3",
+    "catalog_version": "1.0.4",
     "compat_ikuai": "3.7.x",
     "architecture": "x86_64",
     "hosting_branch": "main",
@@ -56,12 +56,12 @@
         "source_visibility": "private",
         "release_repo": "ikuaiapp/plugin-hub",
         "release_tag": "v1.0.0",
-        "tag": "v3.7.26",
-        "version": "3.7.26",
-        "asset_name": "MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
-        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26-ikuai-3.7.26-x64.tar.gz",
-        "sha256": "ad93f61b8e2245755300b380a027c73b3435bd750d3bef3323758cbff103daec",
-        "size": 125786787,
+        "tag": "v3.7.26.1",
+        "version": "3.7.26.1",
+        "asset_name": "MeshCentral-3.7.26.1-ikuai-3.7.26-x64.tar.gz",
+        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/MeshCentral-3.7.26.1-ikuai-3.7.26-x64.tar.gz",
+        "sha256": "8768255e72a29308909824ea32a3932360814d787628e66b86d31f2448d87599",
+        "size": 125788200,
         "icon_source_relpath": "MeshCentral/html/MeshCentral.png",
         "icon_sha256": "1b7d9724b4636be4ab88c373af21d5278b9f951acabcc6678c15c9b9ad7bc394"
       },

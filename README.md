@@ -15,7 +15,7 @@
 | `router_backup` | 路由远程备份 | `ikuaiapp/config-backup` | `PRIVATE`（Release 同步收录） | `3.7` / `v3.7` | `3.7.x` | `47,239 B` (~46 KiB) | 自定义时间备份爱快路由原生配置，支持本地与当前设备远端 FTP/FTPS 管理及校验恢复 |
 | `fn-knock` | fn-knock | `ikuaiapp/knock` | `PRIVATE`（Release 同步收录） | `2.5.11` / `v2.5.11` | `3.7.x` | `32,157,989 B` (~30.7 MiB) | fn-knock 管理、每日备份与完整恢复 |
 | `docker` | Docker容器 | `ikuaiapp/docker` | `PRIVATE`（Release 同步收录） | `28.5.2` / `v28.5.2` | `3.7.x` | `100,046,010 B` (~95.4 MiB) | 通过Docker功能，用户可以打包应用以及依赖包到一个可移植的镜像中，然后发布到任何流行的 Linux或Windows 机器上，也可以实现虚拟化。容器是完全使用沙箱机制，相互之间不会有任何接口。 |
-| `MeshCentral` | MeshCentral 远程管理 | `ikuaiapp/MeshCentral` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26` | `125,786,787 B` (~120.0 MiB) | 在爱快路由器本机运行 MeshCentral 1.3.1 远程管理平台（适配 iKuai 3.7.26 x64） |
+| `MeshCentral` | MeshCentral 远程管理 | `ikuaiapp/MeshCentral` | `PRIVATE`（Release 同步收录） | `3.7.26.1` / `v3.7.26.1` | `3.7.26` | `125,788,200 B` (~120.0 MiB) | 在爱快路由器本机运行 MeshCentral 1.3.1 远程管理平台（适配 iKuai 3.7.26 x64） |
 | `vnt2` | VNT 套件 | `ikuaiapp/vnt` | `PRIVATE`（Release 同步收录） | `3.7.26.1` / `v3.7.26.1` | `3.7.26` | `11,942,180 B` (~11.4 MiB) | VNT 2.x 客户端与 VNTS 服务端爱快一体化管理套件。 |
 | `vnstat` | vnStat 流量统计 | `ikuaiapp/vnstat` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26+` | `1,395,719 B` (~1.3 MiB) | WAN出口与每接口独立账期流量统计（内置 vnStat 2.14） |
 | `system-tools` | 系统工具 | `ikuaiapp/system-tools` | `PRIVATE`（Release 同步收录） | `1.1.9` / `v1.1.9` | `3.7.x` | `284,169 B` (~278 KiB) | 爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件 |
