@@ -20,7 +20,7 @@
 | `vnstat` | vnStat 流量统计 | `ikuaiapp/vnstat` | `PRIVATE`（Release 同步收录） | `3.7.26` / `v3.7.26` | `3.7.26+` | `1,395,719 B` (~1.3 MiB) | WAN出口与每接口独立账期流量统计（内置 vnStat 2.14） |
 | `system-tools` | 系统工具 | `ikuaiapp/system-tools` | `PRIVATE`（Release 同步收录） | `1.1.9` / `v1.1.9` | `3.7.x` | `284,169 B` (~278 KiB) | 爱快 3.7.x 系统安全加固、官方外联屏蔽、体验企业版切换与路由ID管理插件 |
 | `ikev2-cert` | IKEv2证书申请 | `ikuaiapp/ikev2-acme` | `PRIVATE`（Release 同步收录） | `3.1.7` / `v3.1.7` | `3.7.x` | `113,141 B` (~110 KiB) | 腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7） |
-| `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `930,568 B` (~909 KiB) | Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。 |
+| `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `933,391 B` (~912 KiB) | Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权、分账号分插件 RBAC 权限控制与 Unix Socket 隔离，支持快速安全进入路由器终端。 |
 | `socks5` | SK5分流 | `ikuaiapp/socks5` | `PRIVATE`（Release 同步收录） | `0.01` / `v0.01` | `3.7.x` | `25,348,542 B` (~24.2 MiB) | 批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。 |
 
 > **大体积插件提示**：`docker`（~95.4 MiB）与 `MeshCentral`（~120.0 MiB）超过原厂 iKuai `3.7.26` 的 50 MiB 默认上传限制，需配合 `plugin-store` 提供的 `128 MiB` 上传放行守护、在线安装链路或 `safe_import.sh` 使用，并确保 `/etc/log` 与 `/tmp` 拥有充足可用空间。

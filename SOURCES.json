@@ -1,7 +1,7 @@
 {
   "target": {
     "catalog_schema_version": 1,
-    "catalog_version": "1.0.1",
+    "catalog_version": "1.0.2",
     "compat_ikuai": "3.7.x",
     "architecture": "x86_64",
     "hosting_branch": "main",
@@ -130,8 +130,8 @@
         "version": "1.7.7",
         "asset_name": "ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
         "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
-        "sha256": "98da2f68cd5959dedb1c7059d364b00dd54e5997fd0e13a23d5da9665c8a9e2f",
-        "size": 930568,
+        "sha256": "771c3b50413ed8690bbf8aac2450a3c34aac1089bb5e5cdd933a078d36dd4da3",
+        "size": 933391,
         "icon_source_relpath": "Ttyd/html/Ttyd.png",
         "icon_sha256": "21964f858474fce7d828ab9986f2c9df2b555ffa9d2057608af32c14a116c9b7"
       },

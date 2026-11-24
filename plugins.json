@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-24T02:52:43Z",
+  "generated_at": "2026-11-24T17:49:10Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -279,7 +279,7 @@
       "compat": [
         "3.7.x"
       ],
-      "description": "Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权与 Unix Socket 隔离，支持快速安全进入路由器终端。",
+      "description": "Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权、分账号分插件 RBAC 权限控制与 Unix Socket 隔离，支持快速安全进入路由器终端。",
       "asset_name": "ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
       "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
       "mirror_urls": [
@@ -290,11 +290,11 @@
         "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz",
         "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/ttyd-1.7.7-ikuai-3.7.x-x64.tar.gz"
       ],
-      "sha256": "98da2f68cd5959dedb1c7059d364b00dd54e5997fd0e13a23d5da9665c8a9e2f",
-      "size": 930568,
+      "sha256": "771c3b50413ed8690bbf8aac2450a3c34aac1089bb5e5cdd933a078d36dd4da3",
+      "size": 933391,
       "icon": "icons/Ttyd.png",
       "manufacturer": "iKuai",
-      "releasenotes": "升级上游 ttyd 至 1.7.7，配置与运行日志迁移至 /etc/log 并支持有界轮转，全面兼容 iKuai 3.7.x x64。",
+      "releasenotes": "适配 plugin-store v2.2.0 分账号分插件 RBAC（终端与写操作强制要求可修改 x 权限，只读 r 账号仅展示状态并隐藏终端，取消 x 权限 1 秒内断开 WebSocket）。",
       "only_offline_install": false
     },
     {
