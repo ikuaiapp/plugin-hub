@@ -40,7 +40,6 @@ INNER_SENSITIVE_FILENAMES = frozenset({"hosts.yml", ".env", ".netrc", "id_rsa", 
 INNER_SENSITIVE_SUFFIXES = frozenset(
     {
         ".key",
-        ".pem",
         ".p12",
         ".pfx",
         ".sqlite",
@@ -55,11 +54,28 @@ INNER_SENSITIVE_SUFFIXES = frozenset(
         ".db-wal",
         ".db-shm",
         ".db-journal",
-        ".env",
         ".bak",
         ".backup",
     }
 )
+REAL_PRIVATE_KEY_RE = re.compile(
+    r"-----BEGIN (?:[A-Z ]+ )?" + r"PRIVATE KEY(?: BLOCK)?-----[\r\n]+[A-Za-z0-9+/=\r\n]{40,}-----END ",
+    re.ASCII,
+)
+# Inner archive content audit enforces real secrets/credentials/tokens/host-paths/real PEM keys,
+# while allowing legitimate router plugin LAN/VPN/Docker RFC1918 subnet defaults and JS library
+# PEM header string constants.
+ARCHIVE_SKIP_RULE_NAMES = frozenset(
+    {
+        "private RFC1918 192.168 IP",
+        "private RFC1918 10.x IP",
+        "private RFC1918 172.16-31 IP",
+        "private key block",
+    }
+)
+ARCHIVE_CONTENT_RULES = tuple(
+    (name, pat) for name, pat in public_audit.CONTENT_RULES if name not in ARCHIVE_SKIP_RULE_NAMES
+) + (("private key material", REAL_PRIVATE_KEY_RE),)
 
 
 class SyncHubError(Exception):
@@ -154,6 +170,28 @@ def _check_safe_member_path(name: str, *, is_link: bool = False, linkname: str =
     return norm
 
 
+def _archive_text_findings(label: str, text: str) -> list[str]:
+    return [f"{label}: {rule_name}" for rule_name, pattern in ARCHIVE_CONTENT_RULES if pattern.search(text)]
+
+
+def _archive_bytes_findings(label: str, raw_bytes: bytes) -> list[str]:
+    findings: list[str] = []
+    seen: set[str] = set()
+
+    def _record(items: list[str]) -> None:
+        for item in items:
+            if item not in seen:
+                seen.add(item)
+                findings.append(item)
+
+    _record(_archive_text_findings(label, raw_bytes.decode("utf-8", errors="replace")))
+    if b"\x00" in raw_bytes:
+        _record(_archive_text_findings(label, raw_bytes.decode("utf-16-le", errors="ignore")))
+        _record(_archive_text_findings(label, raw_bytes.decode("utf-16-be", errors="ignore")))
+        _record(_archive_text_findings(label, raw_bytes.replace(b"\x00", b"").decode("latin-1", errors="replace")))
+    return findings
+
+
 def _inner_filename_findings(norm_path: str) -> list[str]:
     findings: list[str] = []
     p = Path(norm_path)
@@ -164,7 +202,7 @@ def _inner_filename_findings(norm_path: str) -> list[str]:
         or any(s.lower() in INNER_SENSITIVE_SUFFIXES for s in p.suffixes)
     ):
         findings.append(f"{norm_path}: sensitive filename inside plugin archive")
-    for rule_name, pattern in public_audit.CONTENT_RULES:
+    for rule_name, pattern in ARCHIVE_CONTENT_RULES:
         if pattern.search(norm_path):
             findings.append(f"{norm_path}: sensitive filename ({rule_name})")
     return findings
@@ -215,7 +253,7 @@ def inspect_plugin_tarball(
                         if extracted is not None:
                             data = extracted.read(public_audit.MAX_FILE_BYTES + 1)
                             if not data.startswith(public_audit.ELF_MAGIC):
-                                audit_findings.extend(public_audit.bytes_findings(norm, data))
+                                audit_findings.extend(_archive_bytes_findings(norm, data))
 
             if not has_install_sh or len(metadata_members) != 1:
                 raise NonPluginReleaseError(

@@ -16,7 +16,7 @@
   - `sync_hub.py`：自动扫描 `ikuaiapp` 组织仓库、脱敏审计新/新版插件包并上传到 `plugin-hub` Release 的同步工具（支持 `--dry-run`、`--upload-release`、`--bump-version`、`--offline-dir`）。
   - `verify_mirrors.py`：模拟路由器 `OpenSSL 1.0.2u` TLS 1.2 上限的镜像可达性与反 HTML 劫持探测工具。
   - `public_audit.py`：公开发布前的脱敏审计脚本（支持 `--working-tree` 与 `--history`）。
-- `.github/workflows/sync-hub.yml`：GitHub Actions 云端定时（每 6 小时）及手动触发工作流，需配置具备 `repo` 权限的 `HUB_SYNC_TOKEN` Secret 以读取私有上游仓库。
+- `.github/workflows/sync-hub.yml`：GitHub Actions 云端定时（每 2 小时）及手动触发工作流，需配置具备 `repo` 权限的 `HUB_SYNC_TOKEN` Secret 以读取私有上游仓库。
 - `tests/`：纯 Python 标准库编写的离线 `unittest` 测试套件。
 
 ---

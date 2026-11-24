@@ -102,7 +102,7 @@ python3 -B scripts/public_audit.py --history HEAD
 本仓库已配置云端自动巡检工作流 [`.github/workflows/sync-hub.yml`](.github/workflows/sync-hub.yml) 与同步脚本 [`scripts/sync_hub.py`](scripts/sync_hub.py)：
 
 - **触发方式**：
-  - 每 6 小时自动定时巡检（`cron: "0 */6 * * *"`）；
+  - 每 2 小时自动定时巡检（`cron: "0 */2 * * *"`）；
   - 支持在 GitHub Actions 页面点击 **`Run workflow`**（`workflow_dispatch`）手动触发，或通过 `repository_dispatch` (`plugin-release`) 立即触发。
 - **自动闭环流程**：
   1. 扫描 `ikuaiapp` 名下所有未归档仓库（支持公开与私有插件仓库，自动跳过 `plugin-hub`、`plugin-store`、`reinstall`、`ikuai-plus` 及无 Release 的仓库）；

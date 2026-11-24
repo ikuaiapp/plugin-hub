@@ -209,7 +209,7 @@ class SyncHubTests(unittest.TestCase):
                 name="bad_leak",
                 alias="Leaky",
                 version="1.0.0",
-                extra_files={"script/test.sh": ("HOST=192." + "168.2.252\n").encode("utf-8")},
+                extra_files={"script/test.sh": ("TOKEN=gho_" + "1234567890abcdef\n").encode("utf-8")},
             )
             (offline / "releases" / "bad-leak.json").write_text(
                 json.dumps(
@@ -224,6 +224,42 @@ class SyncHubTests(unittest.TestCase):
             )
             with self.assertRaises(sync_hub.SyncHubError):
                 sync_hub.sync_hub(repo_root=hub, offline_dir=offline)
+
+            # Real multi-line PEM private key material is rejected, while standard LAN CIDR
+            # defaults and one-line JS library PEM header strings in bundled UI are allowed.
+            ok_ui_path, _ = _make_plugin_tarball(
+                tmp_path / "ok_ui.tar.gz",
+                top_dir="lan_app",
+                name="lan_app",
+                alias="LAN App",
+                version="1.0.0",
+                extra_files={
+                    "bin/ui/app.js": (
+                        "const lan=['192." + "168.0.0/16','10." + "0.0.0/8','172." + "16.0.0/12'];\n"
+                        "const hdr='-----BEGIN " + "PRIVATE KEY-----';\n"
+                    ).encode("utf-8"),
+                    "certs/ca.pem": b"-----BEGIN CERTIFICATE-----\nMIIB\n-----END CERTIFICATE-----\n",
+                },
+            )
+            inspected_ok = sync_hub.inspect_plugin_tarball(ok_ui_path, asset_name="ok_ui.tar.gz")
+            self.assertEqual(inspected_ok.name, "lan_app")
+
+            real_key_path, _ = _make_plugin_tarball(
+                tmp_path / "real_key.tar.gz",
+                top_dir="key_leak",
+                name="key_leak",
+                alias="Key Leak",
+                version="1.0.0",
+                extra_files={
+                    "certs/server.pem": (
+                        "-----BEGIN RSA " + "PRIVATE KEY-----\n"
+                        + ("A" * 64 + "\n") * 2
+                        + "-----END RSA " + "PRIVATE KEY-----\n"
+                    ).encode("utf-8"),
+                },
+            )
+            with self.assertRaises(sync_hub.SyncHubError):
+                sync_hub.inspect_plugin_tarball(real_key_path, asset_name="real_key.tar.gz")
 
             trav_path, _ = _make_plugin_tarball(
                 tmp_path / "trav.tar.gz",
