@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-24T17:58:18Z",
+  "generated_at": "2026-11-25T03:18:16Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -325,6 +325,36 @@
       "icon": "icons/socks5.png",
       "manufacturer": "iKuai",
       "releasenotes": "",
+      "only_offline_install": false
+    },
+    {
+      "name": "mystyle",
+      "alias": "爱快样式",
+      "repo": "ikuaiapp/mystyle",
+      "tag": "v0.01",
+      "version": "0.01",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "爱快 3.7.x 界面精简美化插件：隐藏登录页与顶栏 Logo/版本、云绑定/升级/消息图标、帮助反馈及底部版权信息，支持逐项开关与一键还原。",
+      "asset_name": "mystyle-0.01-ikuai-3.7.x.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/mystyle-0.01-ikuai-3.7.x.tar.gz"
+      ],
+      "sha256": "738201e07b085af38c587a62f880430658dba455dde32d2491c1a6388dd98355",
+      "size": 12275,
+      "icon": "icons/mystyle.png",
+      "manufacturer": "ikuaiapp",
+      "releasenotes": "v0.01 初始版本：基于官方 oem.css 钩子纯 CSS 精简爱快 3.7.x 界面，提供 6 项独立开关与恢复原版功能。",
       "only_offline_install": false
     }
   ]
