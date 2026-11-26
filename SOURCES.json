@@ -1,7 +1,7 @@
 {
   "target": {
     "catalog_schema_version": 1,
-    "catalog_version": "1.0.5",
+    "catalog_version": "1.0.6",
     "compat_ikuai": "3.7.x",
     "architecture": "x86_64",
     "hosting_branch": "main",
@@ -140,12 +140,12 @@
         "source_visibility": "private",
         "release_repo": "ikuaiapp/plugin-hub",
         "release_tag": "v1.0.0",
-        "tag": "v0.01",
-        "version": "0.01",
-        "asset_name": "socks5-0.01-ikuai-3.7.x-x64.tar.gz",
-        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.01-ikuai-3.7.x-x64.tar.gz",
-        "sha256": "2a73bc6a22d510a10dbf67fc34f5c609e1629dacd31359ec08f821bef8f78986",
-        "size": 25348542,
+        "tag": "v0.02",
+        "version": "0.02",
+        "asset_name": "socks5-0.02-ikuai-3.7.x-x64.tar.gz",
+        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.02-ikuai-3.7.x-x64.tar.gz",
+        "sha256": "bb1b3e7bbe88912af258fe43180e1143e52afa1b157e00ab51b6db9d7116df96",
+        "size": 25353644,
         "icon_sha256": "eeb387b49d2caa03e0e8578a371a02e1697b851f45d535ba0ce78b0466c8168e"
       },
       "mystyle": {
