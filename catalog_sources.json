@@ -341,6 +341,31 @@
       "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",
       "release_tag": "v1.0.0"
+    },
+    {
+      "name": "airhand",
+      "alias": "AirHand 远程桌面",
+      "repo": "ikuaiapp/airhand",
+      "visibility": "public",
+      "tag": "v0.4.0",
+      "version": "0.4.0",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "高性能低延迟远程桌面中转站与内置 Web 控制台（QUIC/硬件编解码，适配 iKuai 3.7.x x64）",
+      "manufacturer": "sqlpxc / ikuaiapp",
+      "releasenotes": "首发版本，对齐官方 AirHand v0.4.0：独立中转站/Web 客户端双开关、免二次登录同源嵌入与全屏、跨爱快多中转预设切换、全平台客户端下载与一键 config.toml 生成。",
+      "only_offline_install": false,
+      "asset_name": "airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "6b2ea234c7842d26133b384c01890f4521a6c8c21caa5990a7af58978fb42a57",
+      "size": 5521236,
+      "icon": "icons/airhand.png",
+      "source_visibility": "private",
+      "release_repo": "ikuaiapp/plugin-hub",
+      "release_tag": "v1.0.0"
     }
   ]
 }

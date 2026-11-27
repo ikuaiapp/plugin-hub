@@ -1,7 +1,7 @@
 {
   "target": {
     "catalog_schema_version": 1,
-    "catalog_version": "1.0.7",
+    "catalog_version": "1.0.8",
     "compat_ikuai": "3.7.x",
     "architecture": "x86_64",
     "hosting_branch": "main",
@@ -160,6 +160,19 @@
         "sha256": "738201e07b085af38c587a62f880430658dba455dde32d2491c1a6388dd98355",
         "size": 12275,
         "icon_sha256": "4e000761576547d1cf01afffa8465b2831b91bed1ece2b51e8282ad4e66b5957"
+      },
+      "airhand": {
+        "repo": "ikuaiapp/airhand",
+        "source_visibility": "private",
+        "release_repo": "ikuaiapp/plugin-hub",
+        "release_tag": "v1.0.0",
+        "tag": "v0.4.0",
+        "version": "0.4.0",
+        "asset_name": "airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "sha256": "6b2ea234c7842d26133b384c01890f4521a6c8c21caa5990a7af58978fb42a57",
+        "size": 5521236,
+        "icon_sha256": "926b00d981b50dd32e7296e30b678f8c2fe1ead105f05691f147cbc4e8cf1300"
       }
     },
     "mirrors": {

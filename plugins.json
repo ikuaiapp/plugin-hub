@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-27T06:40:25Z",
+  "generated_at": "2026-11-27T16:11:24Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -355,6 +355,36 @@
       "icon": "icons/mystyle.png",
       "manufacturer": "ikuaiapp",
       "releasenotes": "v0.01 初始版本：基于官方 oem.css 钩子纯 CSS 精简爱快 3.7.x 界面，提供 6 项独立开关与恢复原版功能。",
+      "only_offline_install": false
+    },
+    {
+      "name": "airhand",
+      "alias": "AirHand 远程桌面",
+      "repo": "ikuaiapp/airhand",
+      "tag": "v0.4.0",
+      "version": "0.4.0",
+      "arch": [
+        "x64"
+      ],
+      "compat": [
+        "3.7.x"
+      ],
+      "description": "高性能低延迟远程桌面中转站与内置 Web 控制台（QUIC/硬件编解码，适配 iKuai 3.7.x x64）",
+      "asset_name": "airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+      "mirror_urls": [
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/airhand-0.4.0-ikuai-3.7.x-x64.tar.gz"
+      ],
+      "sha256": "6b2ea234c7842d26133b384c01890f4521a6c8c21caa5990a7af58978fb42a57",
+      "size": 5521236,
+      "icon": "icons/airhand.png",
+      "manufacturer": "sqlpxc / ikuaiapp",
+      "releasenotes": "首发版本，对齐官方 AirHand v0.4.0：独立中转站/Web 客户端双开关、免二次登录同源嵌入与全屏、跨爱快多中转预设切换、全平台客户端下载与一键 config.toml 生成。",
       "only_offline_install": false
     }
   ]
