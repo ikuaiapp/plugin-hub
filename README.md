@@ -22,7 +22,7 @@
 | `ikev2-cert` | IKEv2证书申请 | `ikuaiapp/ikev2-acme` | `PRIVATE`（Release 同步收录） | `3.1.7` / `v3.1.7` | `3.7.x` | `113,141 B` (~110 KiB) | 腾讯云 DNSPod / Cloudflare DNS 验证，IKEv2 证书申请、续期及应用（acme.sh 3.1.7） |
 | `Ttyd` | Ttyd终端 | `ikuaiapp/ttyd` | `PRIVATE`（Release 同步收录） | `1.7.7` / `v1.7.7` | `3.7.x` | `933,391 B` (~912 KiB) | Ttyd 是一个用于将命令行终端（TTY）共享到 Web 浏览器中的开源工具。通过路由器会话内嵌鉴权、分账号分插件 RBAC 权限控制与 Unix Socket 隔离，支持快速安全进入路由器终端。 |
 | `socks5` | SK5分流 | `ikuaiapp/socks5` | `PRIVATE`（Release 同步收录） | `0.03` / `v0.03` | `3.7.x` | `25,370,800 B` (~24.2 MiB) | 批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。 |
-| `mystyle` | 爱快样式 | `ikuaiapp/mystyle` | `PRIVATE`（Release 同步收录） | `0.01` / `v0.01` | `3.7.x` | `12,275 B` (~12 KiB) | 爱快 3.7.x 界面精简美化插件：隐藏登录页与顶栏 Logo/版本、云绑定/升级/消息图标、帮助反馈及底部版权信息，支持逐项开关与一键还原。 |
+| `mystyle` | 爱快样式 | `ikuaiapp/mystyle` | `PRIVATE`（Release 同步收录） | `0.02` / `v0.02` | `3.7.x` | `12,516 B` (~12 KiB) | 爱快 3.7.x 界面精简美化插件：隐藏登录页与顶栏 Logo/版本、云绑定/升级/消息图标、帮助反馈及底部版权信息，支持逐项开关与一键还原。 |
 | `airhand` | AirHand 远程桌面 | `ikuaiapp/airhand` | `PRIVATE`（Release 同步收录） | `0.4.0` / `v0.4.0` | `3.7.x` | `5,521,236 B` (~5.3 MiB) | 高性能低延迟远程桌面中转站与内置 Web 控制台（QUIC/硬件编解码，适配 iKuai 3.7.x x64） |
 
 > **大体积插件提示**：`docker`（~95.4 MiB）与 `MeshCentral`（~120.0 MiB）超过原厂 iKuai `3.7.26` 的 50 MiB 默认上传限制，需配合 `plugin-store` 提供的 `128 MiB` 上传放行守护、在线安装链路或 `safe_import.sh` 使用，并确保 `/etc/log` 与 `/tmp` 拥有充足可用空间。
