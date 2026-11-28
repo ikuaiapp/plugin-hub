@@ -297,8 +297,8 @@
       "alias": "SK5分流",
       "repo": "ikuaiapp/socks5",
       "visibility": "public",
-      "tag": "v0.03",
-      "version": "0.03",
+      "tag": "v0.04",
+      "version": "0.04",
       "arch": [
         "x86_64"
       ],
@@ -309,9 +309,9 @@
       "manufacturer": "iKuai",
       "releasenotes": "",
       "only_offline_install": false,
-      "asset_name": "socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-      "sha256": "097132239d6acab7c2dba358ca781b52dbad493ceed9e1750399bae319e084c1",
-      "size": 25370800,
+      "asset_name": "socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+      "sha256": "bf08f94134e13809cc203ec2341664c083fd08b32e10d1537a74ee9912bbb363",
+      "size": 25373368,
       "icon": "icons/socks5.png",
       "source_visibility": "private",
       "release_repo": "ikuaiapp/plugin-hub",

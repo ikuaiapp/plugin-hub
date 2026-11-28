@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at": "2026-11-28T01:02:04Z",
+  "generated_at": "2026-11-28T04:46:05Z",
   "hub_repo": "ikuaiapp/plugin-hub",
   "mirrors": {
     "raw": [
@@ -301,8 +301,8 @@
       "name": "socks5",
       "alias": "SK5分流",
       "repo": "ikuaiapp/socks5",
-      "tag": "v0.03",
-      "version": "0.03",
+      "tag": "v0.04",
+      "version": "0.04",
       "arch": [
         "x86_64"
       ],
@@ -310,18 +310,18 @@
         "3.7.x"
       ],
       "description": "批量支持 Socks5 及多协议代理分流插件，支持按局域网 IP/CIDR 批量分配代理节点、扩展 API 自动化与移动端适配。",
-      "asset_name": "socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
+      "asset_name": "socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+      "download_url": "https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
       "mirror_urls": [
-        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz",
-        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.03-ikuai-3.7.x-x64.tar.gz"
+        "https://gh-proxy.org/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+        "https://ghfast.top/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+        "https://gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+        "https://cdn.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+        "https://edgeone.gh-proxy.com/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz",
+        "https://wget.la/https://github.com/ikuaiapp/plugin-hub/releases/download/v1.0.0/socks5-0.04-ikuai-3.7.x-x64.tar.gz"
       ],
-      "sha256": "097132239d6acab7c2dba358ca781b52dbad493ceed9e1750399bae319e084c1",
-      "size": 25370800,
+      "sha256": "bf08f94134e13809cc203ec2341664c083fd08b32e10d1537a74ee9912bbb363",
+      "size": 25373368,
       "icon": "icons/socks5.png",
       "manufacturer": "iKuai",
       "releasenotes": "",
